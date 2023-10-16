@@ -1,11 +1,21 @@
-import './App.css';
-import Navbar from "./components/Navbar";
+import React from "react";
+import { Route, Routes } from "react-router-dom";
 import MainPage from "./components/MainPage";
+import "./App.css";
+import Login from "./components/Login";
 
-function App() {
+/**
+ * Główny komponent aplikacji.
+ *
+ * @returns {JSX.Element} Wyrenderowany komponent App.
+ */
+const App = () => {
   return (
-      <div className="App">
-        <MainPage></MainPage>
+      <div>
+        <Routes>
+          <Route path="/" element={<Login />} />
+          <Route path="/mainPage" element={<MainPage />} />
+        </Routes>
       </div>
   );
 }
