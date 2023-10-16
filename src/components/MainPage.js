@@ -22,9 +22,12 @@ const MainPage = () => {
     return (
         <div style={{display: "flex", flexDirection: "column", alignItems: "center"}}>
             <h2 style={{margin: "20px 40px"}}>Lista pacjentów</h2>
-            <Typography gutterBottom variant="subtitle1" component="div" m={2}>
-                Poniżej znajduje się lista Twoich pacjentów. Możesz na bieżąco monitorować ich stan zdrowia dzięki raportom
-                oraz szybko reagować poprzez edycję listy ich leków.
+            <Typography gutterBottom variant="subtitle1" component="div" style={{marginTop: "10px"}}>
+                Poniżej znajduje się lista Twoich pacjentów.
+            </Typography>
+            <Typography gutterBottom variant="subtitle1" component="div" style={{marginBottom: "20px"}}>
+                Pod Kontrolą pozwala Ci na bieżąco monitorować ich stan zdrowia dzięki raportom
+                oraz szybko reagować na niepokojące zmiany poprzez edycję listy leków.
             </Typography>
 
             <div style={{display: "flex", minWidth: "600px", gap: "30px", justifyContent: "center", alignItems: "center", flexDirection: "row"}}>
@@ -32,11 +35,9 @@ const MainPage = () => {
                     <List>
                         {generate(
                             <ListItem>
-                                <ListItemAvatar>
-                                    <Avatar>
-                                        <AccountCircleIcon fontSize="large"/>
-                                    </Avatar>
-                                </ListItemAvatar>
+                                <IconButton disabled>
+                                    <AccountCircleIcon fontSize="large"/>
+                                </IconButton>
                                 <ListItemText primary="Single-line item"/>
                                 <IconButton edge="end" aria-label="delete" style={{margin: "0 3px"}}>
                                     <DeleteIcon/>
