@@ -138,7 +138,7 @@ export default function Auth(props) {
                                 </span>
                             </div>
                             <div className="form-group mt-3">
-                                <label>Email</label>
+                                <label className="auth-label">Email</label>
                                 <input
                                     type="email"
                                     className="form-control mt-1"
@@ -148,7 +148,7 @@ export default function Auth(props) {
                                 />
                             </div>
                             <div className="form-group mt-3">
-                                <label>Hasło</label>
+                                <label className="auth-label">Hasło</label>
                                 <input
                                     type="password"
                                     className="form-control mt-1"
@@ -157,6 +157,7 @@ export default function Auth(props) {
                                     onChange={(event) => setLoginPassword(event.target.value)}
                                 />
                             </div>
+
                             <div className="d-grid gap-2 mt-3">
                                 <button className="buttonS" onClick={login} type="button">
                                     Wyślij
@@ -172,16 +173,16 @@ export default function Auth(props) {
 
     return (
         <>
-            {/*<MainNavbar />*/}
             <div className="Auth-form-container">
+                <div id="background1"></div>
                 <form className="Auth-form">
                     <div className="Auth-form-content">
                         <h3 className="Auth-form-title">Zarejestruj się</h3>
                         <div className="text-center">
                             Zarejestrowany?{" "}
                             <span className="link-primary custom-color" onClick={changeAuthMode}>
-                                Zaloguj się
-                            </span>
+                Zaloguj się
+              </span>
                         </div>
                         <div className="form-group mt-3">
                             <label>Email</label>
@@ -210,6 +211,7 @@ export default function Auth(props) {
                         </div>
                     </div>
                 </form>
+                <div id="background2"></div>
             </div>
         </>
     );
