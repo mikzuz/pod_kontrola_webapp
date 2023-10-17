@@ -1,5 +1,5 @@
 import React from 'react';
-import CollapsibleExample from './Navbar'; // Zaimportuj komponent
+import CollapsibleExample from './components/NavbarNew'; // Zaimportuj komponent
 
 
 function Dashboard() {
