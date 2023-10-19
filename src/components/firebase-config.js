@@ -2,6 +2,8 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth"; // Dodaj ten import
 import { getFirestore } from "firebase/firestore"; // Dodaj ten import
+import { getDatabase, ref, push } from "firebase/database";
+
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -21,5 +23,5 @@ const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 
-// export const database = getDatabase(app, "https://react-project-3ae6c-default-rtdb.europe-west1.firebasedatabase.app/");
+export const database = getDatabase(app);
 

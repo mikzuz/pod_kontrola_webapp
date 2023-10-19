@@ -5,7 +5,7 @@
 
 import React, {useEffect, useState} from "react";
 import {createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut} from 'firebase/auth';
-import {auth} from '../firebase-config';
+import {auth} from './firebase-config';
 import {Navigate, useNavigate} from "react-router-dom";
 import "../Auth.css";
 

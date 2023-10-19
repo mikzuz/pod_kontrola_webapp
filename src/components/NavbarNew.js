@@ -1,38 +1,41 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { useNavigate } from 'react-router-dom';
 
 function CollapsibleExample() {
+    const navigate = useNavigate();
+
     const blueText = {
-        color: '#8ed1fc', // Dostosuj kolor tekstu tutaj
+        color: '#8ed1fc',
+    };
+
+    const handleMiesiecznyRaportClick = () => {
+        navigate('/monthlyReport'); // Przekierowanie do "/monthlyReport"
     };
 
     return (
         <Navbar collapseOnSelect expand="lg" className="bg-body-tertiary">
             <Container>
-                <Navbar.Brand href="#home" style={blueText}>React-Bootstrap</Navbar.Brand>
+                <Link to="/monthlyReport" onClick={handleMiesiecznyRaportClick}>
+                    <Navbar.Brand style={blueText}>Miesięczny raport</Navbar.Brand>
+                </Link>
                 <Navbar.Toggle aria-controls="responsive-navbar-nav" />
                 <Navbar.Collapse id="responsive-navbar-nav">
                     <Nav className="me-auto">
-                        <Nav.Link href="#features" style={blueText}>Features</Nav.Link>
-                        <Nav.Link href="#pricing" style={blueText}>Pricing</Nav.Link>
-                        {/*<NavDropdown title="Dropdown" id="collapsible-nav-dropdown">*/}
-                        {/*    <NavDropdown.Item href="#action/3.1" style={blueText}>Action</NavDropdown.Item>*/}
-                        {/*    <NavDropdown.Item href="#action/3.2" style={blueText}>*/}
-                        {/*        Another action*/}
-                        {/*    </NavDropdown.Item>*/}
-                        {/*    <NavDropdown.Item href="#action/3.3" style={blueText}>Something</NavDropdown.Item>*/}
-                        {/*    <NavDropdown.Divider />*/}
-                        {/*    <NavDropdown.Item href="#action/3.4" style={blueText}>*/}
-                        {/*        Separated link*/}
-                        {/*    </NavDropdown.Item>*/}
-                        {/*</NavDropdown>*/}
+                        <Link to="/features">
+                            <Nav.Link style={blueText}>Features</Nav.Link>
+                        </Link>
+                        <Link to="/pricing">
+                            <Nav.Link style={blueText}>Pricing</Nav.Link>
+                        </Link>
                     </Nav>
                     <Nav>
-                        <Nav.Link href="#deets" style={blueText}>More deets</Nav.Link>
-                        <Nav.Link eventKey={2} href="#memes" style={blueText}>
+                        <Nav.Link style={blueText} href="#deets">More deets</Nav.Link>
+                        <Nav.Link style={blueText} eventKey={2} href="#memes">
                             Dank memes
                         </Nav.Link>
                     </Nav>
