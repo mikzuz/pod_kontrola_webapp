@@ -3,16 +3,49 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import DeleteIcon from '@mui/icons-material/Delete';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import Typography from '@mui/material/Typography';
-import {Avatar, IconButton, List, ListItem, ListItemAvatar, ListItemText, styled, Button} from "@mui/material";
+import {IconButton, List, ListItem, ListItemText, styled, Button} from "@mui/material";
+import {auth} from '../firebase-config';
+import { getDatabase, ref, query, orderByChild, equalTo, onValue, get } from 'firebase/database';
+import {useEffect, useState} from "react";
 
 const MainPage = () => {
 
-    function generate(element) {
-        return [0, 1, 2].map((value) =>
-            React.cloneElement(element, {
-                key: value,
-            }),
-        );
+    const db = getDatabase();
+    const [patientList, setPatientList] = useState([]);
+
+    useEffect(() => {
+        getDataFromDatabase();
+    }, []);
+
+    const getDataFromDatabase = () => {
+        const userId = auth.currentUser.uid;
+        const doctorRef = ref(db, "Patients");
+        const queryRef = query(doctorRef, orderByChild("doctor"), equalTo(userId));
+
+        onValue(queryRef, (snapshot) => {
+            snapshot.forEach((childSnapshot) => {
+                const patientId = childSnapshot.child("patient").val();
+                getPatientFromDatabase(patientId);
+            });
+        }, (error) => {
+            console.error('Błąd', error);
+        });
+    };
+
+
+    const getPatientFromDatabase = (patientId) => {
+        const patientRef = ref(db, `Users/${patientId}`);
+
+        // Pobranie danych
+        get(patientRef)
+            .then((snapshot) => {
+                if (snapshot.exists()) {
+                    setPatientList(prevList => [...prevList, `${snapshot.val().firstName} ${snapshot.val().lastName}`]);
+                }
+            })
+            .catch((error) => {
+                console.error("Błąd pobierania danych:", error);
+            });
     }
 
     const Demo = styled('div')(({ theme }) => ({
@@ -33,20 +66,20 @@ const MainPage = () => {
             <div style={{display: "flex", minWidth: "600px", gap: "30px", justifyContent: "center", alignItems: "center", flexDirection: "row"}}>
                 <Demo style={{minWidth: "inherit"}}>
                     <List>
-                        {generate(
-                            <ListItem>
+                        {patientList.map((patientName) => (
+                            <ListItem key={patientName}>
                                 <IconButton disabled>
-                                    <AccountCircleIcon fontSize="large"/>
+                                    <AccountCircleIcon fontSize="large" />
                                 </IconButton>
-                                <ListItemText primary="Single-line item"/>
-                                <IconButton edge="end" aria-label="delete" style={{margin: "0 3px"}}>
-                                    <DeleteIcon/>
+                                <ListItemText primary={patientName} />
+                                <IconButton edge="end" aria-label="delete" style={{ margin: "0 3px" }}>
+                                    <DeleteIcon />
                                 </IconButton>
                                 <IconButton edge="end" aria-label="more">
-                                    <MoreVertIcon/>
+                                    <MoreVertIcon />
                                 </IconButton>
-                            </ListItem>,
-                        )}
+                            </ListItem>
+                        ))}
                     </List>
                 </Demo>
             </div>
