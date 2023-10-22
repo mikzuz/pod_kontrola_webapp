@@ -3,32 +3,33 @@ import { Container, Row, Col, Button, Form } from 'react-bootstrap';
 import CanvasJSReact from '@canvasjs/react-charts';
 import CollapsibleExample from './NavbarNew';
 import { database } from './firebase-config';
-import {ref} from "firebase/database"; // Importuj konfigurację Firebase
-import {query, orderByChild, equalTo, onValue } from "firebase/database";
-
+import { ref } from 'firebase/database';
+import { query, orderByChild, equalTo, onValue } from 'firebase/database';
+import { useNavigate } from 'react-router-dom';
 
 const CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
 const MonthlyReport = () => {
     const [chartOptions, setChartOptions] = useState(null);
     const [selectedMonth, setSelectedMonth] = useState('Styczeń');
+    const [selectedPill, setSelectedPill] = useState('');
+    const [selectedParameter, setSelectedParameter] = useState('');
     const [pillsData, setPillsData] = useState([]);
+    const [reportData, setReportData] = useState([]);
 
     useEffect(() => {
-        // Przykładowe opcje dla wykresu
         const options = {
             animationEnabled: true,
             title: {
                 text: 'Miesięczny raport',
-                font:
-                    'Helvetica Neue Light, HelveticaNeue-Light, Helvetica Neue, Helvetica, Arial, Lucida Grande, sans-serif',
+                font: 'Helvetica Neue Light, HelveticaNeue-Light, Helvetica Neue, Helvetica, Arial, Lucida Grande, sans-serif',
                 fontWeight: 'normal',
             },
             axisX: {
-                title: 'Label',
+                title: 'Data',
             },
             axisY: {
-                title: 'Value',
+                title: '',
             },
             data: [
                 {
@@ -56,35 +57,131 @@ const MonthlyReport = () => {
         'Grudzień',
     ];
 
+    const parameters = {
+        'Aktywność': 'Aktywność',
+        'Ciśnienie': 'Ciśnienie',
+        'Poziom cukru': 'Poziom',
+        'Sen': 'Sen',
+        'Temperatura': 'Temp',
+        'Waga': 'Waga',
+    };
+
+    const units = {
+        'Aktywność': 'godz.',
+        'Ciśnienie': 'mmHg',
+        'Poziom cukru': 'mg/dl',
+        'Sen': 'godz.',
+        'Temperatura': '°C',
+        'Waga': 'kg',
+    };
+
+    const getUnitForParameter = (parameter) => {
+        return units[parameter] || '';
+    };
+
+    const getUnitForMonths = (month) => {
+        return units[month] || '';
+    };
+
+    const navigate = useNavigate();
+
+    const handleTabletsClick = () => {
+        if (selectedPill) {
+            const selectedPillData = pillsData.find((pill) => pill.name === selectedPill);
+            if (selectedPillData) {
+                const selectedPillId = selectedPillData.id;
+                navigate(`/tabletpillsmonthlyreport/${selectedPillId}`);
+                console.log(selectedPillId);
+            }
+        }
+    };
+
     useEffect(() => {
-        // Tworzenie referencji do węzła "Pills" w bazie danych Firebase Realtime Database
-        const pillsRef = ref(database, "Pills");
-        const userStatsQuery = query(pillsRef, orderByChild("pacient"), equalTo("qjETQt3F6qgSuKTSZtmBv10MJmY2"));
+        const pillsRef = ref(database, 'Pills');
+        const userStatsQuery = query(pillsRef, orderByChild('pacient'), equalTo('qjETQt3F6qgSuKTSZtmBv10MJmY2'));
         onValue(userStatsQuery, (snapshot) => {
             if (snapshot.exists()) {
                 const stats = snapshot.val();
-                console.log(stats);
-                // // Przetwarzanie danych i dodawanie ich do listy
-                // const pillsArray = Object.values(data).filter((pill) => pill.pacient === 'xyz');
-                // setPillsData(pillsArray);
+                const statsArray = Object.values(stats);
+                setPillsData(statsArray);
             }
         });
     }, [selectedMonth]);
 
-    // Aktualizacja danych na wykresie przy zmianie wybranego miesiąca
     useEffect(() => {
-        if (pillsData.length > 0) {
-            const updatedData = pillsData.map((pill) => ({
-                label: pill.name,
-                y: pill.frequency,
+        if (pillsData.length > 0 && selectedPill) {
+            const selectedPillData = pillsData.find((pill) => pill.name === selectedPill);
+            if (selectedPillData) {
+                const updatedData = [
+                    {
+                        label: selectedPillData.name,
+                        y: selectedPillData.frequency,
+                    },
+                ];
+
+                const updatedOptions = { ...chartOptions };
+                updatedOptions.data[0].dataPoints = updatedData;
+                updatedOptions.axisY.title = '';
+
+                setChartOptions(updatedOptions);
+            }
+        }
+    }, [pillsData, selectedPill]);
+
+    useEffect(() => {
+        const reportsRef = ref(database, 'report');
+        const userStatsQuery = query(reportsRef, orderByChild('user'), equalTo('qjETQt3F6qgSuKTSZtmBv10MJmY2'));
+        onValue(userStatsQuery, (snapshot) => {
+            if (snapshot.exists()) {
+                const report = snapshot.val();
+                const statsArray = Object.values(report);
+                setReportData(statsArray);
+            }
+        });
+    }, [selectedMonth]);
+
+    useEffect(() => {
+        if (selectedParameter && selectedMonth && reportData.length > 0) {
+            const parameterKey = parameters[selectedParameter];
+            const unit = getUnitForParameter(selectedParameter);
+
+            const monthToNumber = {
+                Styczeń: '01',
+                Luty: '02',
+                Marzec: '03',
+                Kwiecień: '04',
+                Maj: '05',
+                Czerwiec: '06',
+                Lipiec: '07',
+                Sierpień: '08',
+                Wrzesień: '09',
+                Październik: '10',
+                Listopad: '11',
+                Grudzień: '12',
+            };
+
+            const filteredData = reportData.filter((entry) => {
+                const formattedSelectedMonth = monthToNumber[selectedMonth];
+                return (
+                    entry.date.includes(`. ${formattedSelectedMonth}.`) &&
+                    typeof entry[parameterKey] !== 'undefined'
+                );
+            });
+
+            const dataForSelectedParameter = filteredData.map((entry) => ({
+                x: new Date(entry.date),
+                y: parseFloat(entry[parameterKey]),
             }));
 
             const updatedOptions = { ...chartOptions };
-            updatedOptions.data[0].dataPoints = updatedData;
+            updatedOptions.title.text = `Miesięczny raport - ${selectedMonth}`;
+            updatedOptions.axisX.title = 'Data';
+            updatedOptions.data[0].dataPoints = dataForSelectedParameter;
+            updatedOptions.axisY.title = getUnitForParameter(selectedParameter);
 
             setChartOptions(updatedOptions);
         }
-    }, [pillsData]);
+    }, [selectedParameter, selectedMonth, reportData]);
 
     return (
         <div>
@@ -99,9 +196,9 @@ const MonthlyReport = () => {
 
             <Container>
                 <Row>
-                    <div className="form-group mt-3">
-                        <Col>
-                            <h4>Wybierz miesiąc</h4>
+                    <div className="bg-light mt-3">
+                        <div className="form-group p-3">
+                            <h4 className="auth-label">Wybierz miesiąc</h4>
                             <Form>
                                 <Form.Group controlId="exampleForm.SelectCustom">
                                     <Form.Control
@@ -118,45 +215,96 @@ const MonthlyReport = () => {
                                     </Form.Control>
                                 </Form.Group>
                             </Form>
-                        </Col>
+                        </div>
                     </div>
                 </Row>
             </Container>
 
             <Container>
                 <Row>
-                    <Col>
-                        <div className="form-group mt-3">
-                            <h4>Wybierz tabletkę do statystyk</h4>
-                            <Button variant="primary" disabled>
-                                Ładowanie...
-                            </Button>
+                    <div className="bg-light mt-3">
+                        <div className="form-group p-3">
+                            <h4 className="auth-label">Wybierz tabletkę do statystyk</h4>
+                            <Form>
+                                <Form.Group controlId="exampleForm.SelectPill">
+                                    <Form.Control
+                                        as="select"
+                                        custom
+                                        value={selectedPill}
+                                        style={{ width: '100%' }}
+                                        onChange={(e) => setSelectedPill(e.target.value)}
+                                    >
+                                        {pillsData.map((pill, index) => (
+                                            <option key={index} value={pill.name}>
+                                                {pill.name}
+                                            </option>
+                                        ))}
+                                    </Form.Control>
+                                    <Button
+                                        className="dropdown-btn"
+                                        variant="primary"
+                                        style={{
+                                            background: '#8ed1fc',
+                                            borderRadius: '0.5em',
+                                            fontSize: '18px',
+                                            color: '#fff',
+                                            display: 'flex',
+                                            justifyContent: 'center',
+                                            alignItems: 'center',
+                                            padding: '0.7em 0.5em',
+                                            border: 'none',
+                                            cursor: 'pointer',
+                                            marginTop: '10px',
+                                            width: '100%',
+                                        }}
+                                        onClick={handleTabletsClick}
+                                    >
+                                        TABLETKI
+                                    </Button>
+                                </Form.Group>
+                            </Form>
                         </div>
-                    </Col>
+                    </div>
                 </Row>
             </Container>
 
             <Container>
                 <Row>
-                    <Col>
-                        <div className="form-group mt-3">
-                            <h4>Wybierz parametr do wykresu</h4>
-                            <Button variant="primary" disabled>
-                                Ładowanie...
-                            </Button>
+                    <div className="bg-light mt-3">
+                        <div className="form-group p-3">
+                            <h4 className="auth-label">Wybierz parametr</h4>
+                            <Form>
+                                <Form.Group controlId="exampleForm.SelectCustom">
+                                    <Form.Control
+                                        as="select"
+                                        custom
+                                        value={selectedParameter}
+                                        style={{ width: '100%' }}
+                                        onChange={(e) => setSelectedParameter(e.target.value)}
+                                    >
+                                        {Object.keys(parameters).map((parameter, index) => (
+                                            <option key={index} value={parameter}>
+                                                {parameter}
+                                            </option>
+                                        ))}
+                                    </Form.Control>
+                                </Form.Group>
+                            </Form>
                         </div>
-                    </Col>
+                    </div>
                 </Row>
             </Container>
 
             <Container>
                 <Row>
-                    <Col>
-                        {chartOptions && <CanvasJSChart options={chartOptions} />}
-                        <div style={{ height: 240, textAlign: 'center', color: 'black', fontSize: 15, display: 'none' }}>
-                            Brak danych do wyświetlenia
+                    <div className="bg-light p-3">
+                        <div className="form-group mt-3">
+                            {chartOptions && <CanvasJSChart options={chartOptions} />}
+                            <div style={{ height: 240, textAlign: 'center', color: 'black', fontSize: 15, display: 'none' }}>
+                                Brak danych do wyświetlenia
+                            </div>
                         </div>
-                    </Col>
+                    </div>
                 </Row>
             </Container>
         </div>

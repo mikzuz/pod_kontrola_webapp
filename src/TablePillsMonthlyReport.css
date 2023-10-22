@@ -1,0 +1,16 @@
+.header-cell {
+    color: #8ed1fc; /* Kolor nazw kolumn */
+    font-family: "Helvetica Neue Light", "HelveticaNeue-Light", "Helvetica Neue",
+    Helvetica, Arial, "Lucida Grande", sans-serif;
+    font-weight: bold;
+    text-align: center; /* Wyśrodkowanie danych */
+
+}
+
+.center-cell {
+    text-align: center; /* Wyśrodkowanie danych */
+    font-family: "Helvetica Neue Light", "HelveticaNeue-Light", "Helvetica Neue",
+    Helvetica, Arial, "Lucida Grande", sans-serif;
+    font-weight: normal;
+}
+
