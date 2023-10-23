@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from "react-router-dom";
-import { equalTo, onValue, orderByChild, query, ref } from "firebase/database";
+import { useParams } from 'react-router-dom';
+import { equalTo, onValue, orderByChild, query, ref, update } from "firebase/database";
 import { database } from "./firebase-config";
 import { Card, CardContent, Typography } from '@mui/material';
 
@@ -10,10 +10,12 @@ const containerStyle = {
     alignItems: "center",
 };
 
-const cardStyle = {
+const cardStyle = (isUnseen) => ({
     marginBottom: "10px",
-    width: "auto", // Ustawiamy szerokość na "auto"
-};
+    width: "auto",
+    backgroundColor: isUnseen ? "#8ed1fc" : "white",
+    cursor: 'pointer', // Dodajemy kursor "pointer", aby karta była klikalna
+});
 
 const Notifications = () => {
     const [notificationsData, setNotificationsData] = useState([]);
@@ -33,10 +35,21 @@ const Notifications = () => {
         }
     }, [uid]);
 
+    const handleCardClick = (notification) => {
+        if (!notification.seen) {
+            // Jeśli seen jest false, aktualizuj wartość seen na true w bazie danych
+            const notificationRef = ref(database, `Notifications/${notification.id}`);
+            const updates = {
+                seen: true,
+            };
+            update(notificationRef, updates);
+        }
+    };
+
     return (
         <div style={containerStyle}>
             {notificationsData.map((notification, index) => (
-                <Card key={index} variant="outlined" style={cardStyle}>
+                <Card key={index} variant="outlined" style={cardStyle(!notification.seen)} onClick={() => handleCardClick(notification)}>
                     <CardContent>
                         <Typography variant="h6" gutterBottom>
                             Data: {notification.date}
