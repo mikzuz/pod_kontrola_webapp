@@ -9,13 +9,22 @@ import Navbar from './Navbar';
 import {auth} from './firebase-config';
 import { getDatabase, ref, query, orderByChild, equalTo, onValue, get, remove, set } from 'firebase/database';
 import {useEffect, useState} from "react";
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 const MainPage = () => {
+
+    const theme = createTheme({
+        palette: {
+            blue: {
+                main: '#8ed1fc',
+            },
+        },
+    });
 
     const userId = auth.currentUser.uid;
     const db = getDatabase();
     const [patientList, setPatientList] = useState([]);
-    const [ optionsDisplay, setOptionsDisplay ] = useState('none');
+    const [activePatient, setActivePatient] = useState(null);
 
     useEffect(() => {
         getDataFromDatabase();
@@ -82,13 +91,13 @@ const MainPage = () => {
         });
     };
 
-    const showOptions = () => {
-        if(optionsDisplay === "none") {
-            setOptionsDisplay("flex")
+    const showOptions = (patientId) => {
+        if (activePatient === patientId) {
+            setActivePatient(null); // Jeśli kliknięty pacjent jest już aktywny, wyłącz opcje
         } else {
-            setOptionsDisplay("none")
+            setActivePatient(patientId);
         }
-    }
+    };
 
     const showMonthlyReport = () => {
 
@@ -104,7 +113,7 @@ const MainPage = () => {
 
     return (
         <div>
-            {/*<Navbar />*/}
+            <ThemeProvider theme={theme}>
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginTop: "40px" }}>
                 <h1 style={{ margin: "20px 40px" }}>Lista pacjentów</h1>
                 <Typography gutterBottom variant="subtitle1" component="div" style={{ marginTop: "10px" }}>
@@ -118,28 +127,31 @@ const MainPage = () => {
                 <Demo style={{minWidth: "inherit"}}>
                     <List>
                         {patientList.map((patientName) => (
-                            <ListItem key={patientName}>
+                            <div key={patientName}>
+                                <ListItem >
                                 <IconButton disabled>
                                     <AccountCircleIcon fontSize="large" />
                                 </IconButton>
                                 <ListItemText primary={patientName[0]} />
+                                    <IconButton edge="end" aria-label="more" onClick={() => {showOptions(patientName[1]);}}>
+                                        <MoreVertIcon />
+                                    </IconButton>
                                 <IconButton edge="end" aria-label="delete" style={{ margin: "0 3px" }} onClick={() => {deletePatient(patientName[1]);}}>
                                     <DeleteIcon />
                                 </IconButton>
-                                <IconButton edge="end" aria-label="more" onClick={() => {showOptions();}}>
-                                    <MoreVertIcon />
-                                </IconButton>
-                                <div class="options" style={{display: optionsDisplay, height: "100px"}}>
-                                    <Button variant="outlined" style={{margin: "10px"}} onClick={() => {showMonthlyReport()}}>Raport miesięczny</Button>
-                                    <Button variant="outlined" style={{margin: "10px"}} onClick={() => {showPillsList()}}>Lista leków pacjenta</Button>
+                                </ListItem>
+                                <div className="options" style={{display: patientName[1] === activePatient ? 'flex' : 'none', height: "40px", justifyContent: "center", alignItems: "center"}}>
+                                    <Button variant="outlined" style={{margin: "0 10px"}} onClick={() => {showMonthlyReport()}}>Raport miesięczny</Button>
+                                    <Button variant="outlined" style={{margin: "0 10px"}} onClick={() => {showPillsList()}}>Lista leków pacjenta</Button>
                                 </div>
-                            </ListItem>
+                            </div>
                         ))}
                     </List>
                 </Demo>
             </div>
-            <Button variant="outlined" style={{margin: "10px"}} onClick={() => {addPatient()}}>Dodaj pacjenta</Button>
+            <Button variant="contained" color="blue" style={{margin: "10px"}} onClick={() => {addPatient()}}>Dodaj pacjenta</Button>
         </div>
+            </ThemeProvider>
         </div>
     );
 };

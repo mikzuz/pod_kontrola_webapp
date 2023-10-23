@@ -18,7 +18,7 @@ const Navbar = () => {
         navigate("/")
     };
 
-    const CustomAppBar = styled(AppBar)`background-color: rgb(78, 23, 94);`;
+    const CustomAppBar = styled(AppBar)`background-color: #8ed1fc;`;
     const WhiteTypography = styled(Typography)`color: #fff;`;
     const LinkNotUnderlined = styled(Link)`text-decoration: none;`;
 
