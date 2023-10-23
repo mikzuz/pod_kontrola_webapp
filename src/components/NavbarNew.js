@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import {Link, useParams} from 'react-router-dom';
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
@@ -9,6 +9,11 @@ import { useNavigate } from 'react-router-dom';
 function CollapsibleExample() {
     const navigate = useNavigate();
 
+    const { uid } = useParams();
+
+    console.log(uid)
+
+
     const blueText = {
         color: '#8ed1fc',
     };
@@ -17,11 +22,19 @@ function CollapsibleExample() {
         navigate('/monthlyReport'); // Przekierowanie do "/monthlyReport"
     };
 
+    const handleNotificationsClick = (uid) => {
+        navigate(`/notifications/${uid}`);
+    };
+
+
     return (
         <Navbar collapseOnSelect expand="lg" className="bg-body-tertiary">
             <Container>
                 <Link to="/monthlyReport" onClick={handleMiesiecznyRaportClick}>
                     <Navbar.Brand style={blueText}>Miesięczny raport</Navbar.Brand>
+                </Link>
+                <Link to="/notifications/:uid" onClick={() => handleNotificationsClick(uid)}>
+                    <Navbar.Brand style={blueText}>Powiadomienia</Navbar.Brand>
                 </Link>
                 <Navbar.Toggle aria-controls="responsive-navbar-nav" />
                 <Navbar.Collapse id="responsive-navbar-nav">

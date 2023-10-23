@@ -4,9 +4,19 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import Typography from '@mui/material/Typography';
 import { Avatar, IconButton, List, ListItem, ListItemAvatar, ListItemText, styled, Button } from "@mui/material";
-import CollapsibleExample from './NavbarNew'; // Zaimportuj komponent
+import CollapsibleExample from './NavbarNew';
+import {useParams} from "react-router-dom"; // Zaimportuj komponent
+import { useNavigate } from 'react-router-dom';
+
 
 const MainPage = () => {
+
+    const { uid } = useParams();
+    const navigate = useNavigate();
+
+
+    console.log(uid);
+
     function generate(element) {
         return [0, 1, 2].map((value) =>
             React.cloneElement(element, {
@@ -19,10 +29,20 @@ const MainPage = () => {
         backgroundColor: theme.palette.background.paper,
     }));
 
+    const handleNotificationsClick = () => {
+        // Tutaj możesz dodać dowolną logikę związaną z obsługą kliknięcia na przycisku "Przejdź do Powiadomień".
+        // Na przykład, można wykonać jakieś operacje lub po prostu przekierować użytkownika.
+
+        // Przekierowanie użytkownika do widoku "Powiadomienia" z właściwym `uid`.
+        navigate(`/notifications/${uid}`);
+    };
+
     return (
         <>
-            <CollapsibleExample /> {/* Użyj komponentu CollapsibleExample */}
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+            <CollapsibleExample uid={uid} />
+            <Button to={`/notifications/${uid}`} variant="outlined" style={{ margin: "10px" }} onClick={handleNotificationsClick}>
+                Przejdź do Powiadomień
+            </Button>            <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
                 <h2 style={{ margin: "20px 40px" }}>Lista pacjentów</h2>
                 <Typography gutterBottom variant="subtitle1" component="div" style={{ marginTop: "10px" }}>
                     Poniżej znajduje się lista Twoich pacjentów.

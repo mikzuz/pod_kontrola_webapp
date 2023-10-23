@@ -1,7 +1,8 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
 import MainPage from "./components/MainPage";
-import MyComponent from "./components/MonthlyReport"; // Dodaj import MyComponent
+import Notifications from "./components/Notifications";
+
 import "./App.css";
 import Login from "./components/Login";
 import MonthlyReport from "./components/MonthlyReport";
@@ -20,6 +21,8 @@ const App = () => {
                 <Route path="/mainPage/:uid" element={<MainPage />} />
                 <Route path="/tabletpillsmonthlyreport/:selectedPillId/:selectedMonth" element={<TablePillsMonthlyReport />} />
                 <Route path="/monthlyReport" element={<MonthlyReport />} /> {/* Dodaj ścieżkę do MyComponent */}
+                <Route path="/notifications/:uid" element={<Notifications />} /> {/* Dodaj ścieżkę do MyComponent */}
+
             </Routes>
         </div>
     );
