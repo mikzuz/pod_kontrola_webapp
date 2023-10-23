@@ -17,7 +17,7 @@
     padding-top: 30px;
     padding-bottom: 20px;
     border-radius: 15px;
-    background-color: #33E3FF
+    background-color: #8ed1fc
 ;
 }
 
@@ -35,6 +35,7 @@
 }
 
 label {
+    margin-bottom: 0.5em;
     font-size: 14px;
     font-weight: 600;
     color: rgb(34, 34, 34);
@@ -44,13 +45,14 @@ label {
     display: inline-block;
     padding: 10px 20px;
     font-size: 15px;
-    font-family: "Marker Felt", fantasy;
-    cursor: pointer;
+    font-family: "Helvetica Neue Light", "HelveticaNeue-Light", "Helvetica Neue",
+    Helvetica, Arial, "Lucida Grande", sans-serif;
+    font-weight: bold;    cursor: pointer;
     text-align: center;
     text-decoration: none;
     outline: none;
     color: darkblue;
-    background-color: cadetblue;
+    background-color: yellow;
     border: 4px white;
     border-radius: 15px;
     box-shadow: none;
@@ -59,7 +61,7 @@ label {
 .buttonS:hover {background-color: blue}
 
 .buttonS:active {
-    background-color: sandybrown;
+    background-color: yellow;
     box-shadow: 0 5px #666;
     transform: translateY(4px);
 }
@@ -72,7 +74,7 @@ label {
     background-color: #fff;
     background-clip: padding-box;
     border: 1px solid #ced4da;
-    border-radius: 0.25rem;
+    border-radius: 15px;
     transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
 
@@ -148,6 +150,15 @@ body {
     z-index: -1; /* Umieść obraz w tle */
 }
 
+.auth-label {
+    margin-right: 8px;
+    margin-bottom: 8px; /* Dodaj margines na dole etykiety */
+    font-size: 16px; /* Zdefiniuj wielkość czcionki */
+}
+
+.form-control {
+    /* Dodaj styl dla pól do wprowadzania danych, jeśli jest to potrzebne */
+}
 
 
 
@@ -157,14 +168,19 @@ body {
 
 .Auth-form-container,
 .Auth-form {
-    font-family: "Marker Felt", fantasy;
+    font-family: "Helvetica Neue Light", "HelveticaNeue-Light", "Helvetica Neue",
+    Helvetica, Arial, "Lucida Grande", sans-serif;
+    font-weight: normal;
+
 }
 
 .Auth-form-title,
 .link-primary,
 .form-control {
-    font-family: "Marker Felt", fantasy;
+    font-family: "Helvetica Neue Light", "HelveticaNeue-Light", "Helvetica Neue",
+    Helvetica, Arial, "Lucida Grande", sans-serif;
     font-weight: normal;
+
 }
 
 .dashboard-container {
@@ -180,6 +196,6 @@ body {
     color: red;
 }
 .custom-color {
-    color: brown;
+    color: darkblue;
 }
 

@@ -3,6 +3,8 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import DeleteIcon from '@mui/icons-material/Delete';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import Typography from '@mui/material/Typography';
+import { Avatar, IconButton, List, ListItem, ListItemAvatar, ListItemText, styled, Button } from "@mui/material";
+import CollapsibleExample from './NavbarNew'; // Zaimportuj komponent
 import {IconButton, List, ListItem, ListItemText, styled, Button} from "@mui/material";
 import {auth} from '../firebase-config';
 import { getDatabase, ref, query, orderByChild, equalTo, onValue, get } from 'firebase/database';
@@ -53,15 +55,16 @@ const MainPage = () => {
     }));
 
     return (
-        <div style={{display: "flex", flexDirection: "column", alignItems: "center"}}>
-            <h2 style={{margin: "20px 40px"}}>Lista pacjentów</h2>
-            <Typography gutterBottom variant="subtitle1" component="div" style={{marginTop: "10px"}}>
-                Poniżej znajduje się lista Twoich pacjentów.
-            </Typography>
-            <Typography gutterBottom variant="subtitle1" component="div" style={{marginBottom: "20px"}}>
-                Pod Kontrolą pozwala Ci na bieżąco monitorować ich stan zdrowia dzięki raportom
-                oraz szybko reagować na niepokojące zmiany poprzez edycję listy leków.
-            </Typography>
+        <>
+            <CollapsibleExample /> {/* Użyj komponentu CollapsibleExample */}
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                <h2 style={{ margin: "20px 40px" }}>Lista pacjentów</h2>
+                <Typography gutterBottom variant="subtitle1" component="div" style={{ marginTop: "10px" }}>
+                    Poniżej znajduje się lista Twoich pacjentów.
+                </Typography>
+                <Typography gutterBottom variant="subtitle1" component="div" style={{ marginBottom: "20px" }}>
+                    Pod Kontrolą pozwala Ci na bieżąco monitorować ich stan zdrowia dzięki raportom oraz szybko reagować na niepokojące zmiany poprzez edycję listy leków.
+                </Typography>
 
             <div style={{display: "flex", minWidth: "600px", gap: "30px", justifyContent: "center", alignItems: "center", flexDirection: "row"}}>
                 <Demo style={{minWidth: "inherit"}}>
