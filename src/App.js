@@ -1,11 +1,11 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
 import MainPage from "./components/MainPage";
-import MyComponent from "./components/MonthlyReport"; // Dodaj import MyComponent
 import "./App.css";
 import Login from "./components/Login";
 import MonthlyReport from "./components/MonthlyReport";
 import TablePillsMonthlyReport from "./components/TablePillsMonthlyReport";
+import Navbar from "./components/Navbar";
 
 /**
  * Główny komponent aplikacji.
@@ -15,6 +15,7 @@ import TablePillsMonthlyReport from "./components/TablePillsMonthlyReport";
 const App = () => {
     return (
         <div>
+            <Navbar></Navbar>
             <Routes>
                 <Route path="/" element={<Login />} />
                 <Route path="/mainPage" element={<MainPage />} />

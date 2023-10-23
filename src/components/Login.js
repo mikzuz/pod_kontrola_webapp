@@ -75,12 +75,12 @@ export default function Auth(props) {
                 registerEmail,
                 registerPassword
             );
-            console.log(user);
+
             alert("Poprawnie zarejestrowano użytkownika!");
             setRegisterEmail(""); // Wyczyszczenie pola email
             setRegisterPassword(""); // Wyczyszczenie pola hasło
         } catch (error) {
-            console.log(error.message);
+
             alert("Wprowadzono niepoprawne dane!");
             setRegisterEmail(""); // Wyczyszczenie pola email
             setRegisterPassword(""); // Wyczyszczenie pola hasło
@@ -93,13 +93,10 @@ export default function Auth(props) {
     const login = async () => {
         try {
             const user = await signInWithEmailAndPassword(auth, loginEmail, loginPassword);
-            console.log(user);
             setAuthenticated(true)
             localStorage.setItem("authenticated", true);
-            console.log(authenticated);
             alert("Wprowadzono poprawne dane!");
         } catch (error) {
-            console.log(error.message);
             alert("Wprowadzono niepoprawne dane!");
             setLoginEmail(""); // Wyczyszczenie pola email
             setLoginPassword(""); // Wyczyszczenie pola hasło
@@ -108,7 +105,6 @@ export default function Auth(props) {
     };
 
     useEffect(() => {
-        console.log(authenticated);
     }, [authenticated]);
 
     /**
