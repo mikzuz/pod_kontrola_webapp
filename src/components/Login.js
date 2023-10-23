@@ -57,6 +57,8 @@ export default function Auth(props) {
     const [authenticated, setAuthenticated] = useState(localStorage.getItem(localStorage.getItem("authenticated") || false));
 
     const navigate = useNavigate();
+    const [user, setUser] = useState(null); // Dodajemy stan użytkownika
+
 
     /**
      * Funkcja do zmiany trybu autoryzacji.
@@ -70,42 +72,42 @@ export default function Auth(props) {
      */
     const register = async () => {
         try {
-            const user = await createUserWithEmailAndPassword(
+            const userCredential = await createUserWithEmailAndPassword(
                 auth,
                 registerEmail,
                 registerPassword
             );
-            console.log(user);
-            alert("Poprawnie zarejestrowano użytkownika!");
-            setRegisterEmail(""); // Wyczyszczenie pola email
-            setRegisterPassword(""); // Wyczyszczenie pola hasło
+            const newUser = userCredential.user;
+            setUser(newUser); // Ustawienie użytkownika
+            setAuthenticated(true);
+            localStorage.setItem("authenticated", true);
+            navigate(`/mainPage/${newUser.uid}`); // Przekierowanie z UID
         } catch (error) {
             console.log(error.message);
             alert("Wprowadzono niepoprawne dane!");
             setRegisterEmail(""); // Wyczyszczenie pola email
             setRegisterPassword(""); // Wyczyszczenie pola hasło
         }
-    };
+    }
 
     /**
      * Funkcja do logowania użytkownika.
      */
     const login = async () => {
         try {
-            const user = await signInWithEmailAndPassword(auth, loginEmail, loginPassword);
-            console.log(user);
-            setAuthenticated(true)
+            const userCredential = await signInWithEmailAndPassword(auth, loginEmail, loginPassword);
+            const loggedInUser = userCredential.user;
+            setUser(loggedInUser); // Ustawienie użytkownika
+            setAuthenticated(true);
             localStorage.setItem("authenticated", true);
-            console.log(authenticated);
-            alert("Wprowadzono poprawne dane!");
+            navigate(`/mainPage/${loggedInUser.uid}`); // Przekierowanie z UID
         } catch (error) {
             console.log(error.message);
             alert("Wprowadzono niepoprawne dane!");
             setLoginEmail(""); // Wyczyszczenie pola email
             setLoginPassword(""); // Wyczyszczenie pola hasło
-
         }
-    };
+    }
 
     useEffect(() => {
         console.log(authenticated);
@@ -119,7 +121,7 @@ export default function Auth(props) {
     };
 
     if (authenticated) {
-        return <Navigate to="/mainPage" replace />; // Przekierowanie do "/mainPage" gdy authenticated jest true
+        return <Navigate to={`/mainPage/${user.uid}`} replace />;
     }
 
     if (authMode === "signin") {

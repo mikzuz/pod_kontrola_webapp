@@ -17,8 +17,8 @@ const App = () => {
         <div>
             <Routes>
                 <Route path="/" element={<Login />} />
-                <Route path="/mainPage" element={<MainPage />} />
-                <Route path="/tabletpillsmonthlyreport/:selectedPillId" element={<TablePillsMonthlyReport />} />
+                <Route path="/mainPage/:uid" element={<MainPage />} />
+                <Route path="/tabletpillsmonthlyreport/:selectedPillId/:selectedMonth" element={<TablePillsMonthlyReport />} />
                 <Route path="/monthlyReport" element={<MonthlyReport />} /> {/* Dodaj ścieżkę do MyComponent */}
             </Routes>
         </div>

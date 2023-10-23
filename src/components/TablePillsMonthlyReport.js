@@ -6,11 +6,24 @@ import { equalTo, onValue, orderByChild, query, ref, get } from "firebase/databa
 import { database } from "./firebase-config";
 
 const TablePillsMonthlyReport = () => {
-    const { selectedPillId } = useParams();
-    const [pillsData, setPillsData] = useState([]);
+    const { selectedPillId, selectedMonth } = useParams();
     const [occurrenceCount, setOccurrenceCount] = useState({});
     const [maxDaily, setMaxDaily] = useState(0); // Inicjalizacja jako liczba
 
+    const months = {
+        'Styczeń': '01',
+        'Luty': '02',
+        'Marzec': '03',
+        'Kwiecień': '04',
+        'Maj': '05',
+        'Czerwiec': '06',
+        'Lipiec': '07',
+        'Sierpień': '08',
+        'Wrzesień': '09',
+        'Październik': '10',
+        'Listopad': '11',
+        'Grudzień': '12',
+    };
 
     useEffect(() => {
         if (selectedPillId) {
@@ -29,8 +42,6 @@ const TablePillsMonthlyReport = () => {
                     const combinedStats = { ...statsByPacient, ...statsById };
                     const statsArray = Object.values(combinedStats);
 
-                    console.log(statsArray)
-
                     // Wywołaj funkcję countOccurrences po zakończeniu pobierania danych
                     countOccurrences(statsArray);
                 })
@@ -39,7 +50,7 @@ const TablePillsMonthlyReport = () => {
                     console.error("Błąd pobierania danych: ", error);
                 });
         }
-    }, [selectedPillId]);
+    }, [selectedPillId, selectedMonth]);
 
     useEffect(() => {
         if (selectedPillId) {
@@ -58,8 +69,6 @@ const TablePillsMonthlyReport = () => {
                     const combinedStats = { ...statsByPacient, ...statsById };
                     const statsArray = Object.values(combinedStats);
 
-                    console.log(statsArray);
-
                     // Wywołaj funkcję countOccurrences po zakończeniu pobierania danych
                     countMaxDaily(statsArray);
                 })
@@ -68,34 +77,29 @@ const TablePillsMonthlyReport = () => {
                     console.error("Błąd pobierania danych: ", error);
                 });
         }
-    }, [selectedPillId]);
+    }, [selectedPillId, selectedMonth]);
 
-// Funkcja do wyciągnięcia 'time_list' i obliczenia liczby elementów
     const countMaxDaily = (data) => {
         const timeListLength = data
             .filter((item) => item.id === selectedPillId)
             .map((item) => item.time_list.length);
 
         if (timeListLength.length > 0) {
-            console.log("Liczba elementów w time_list:", timeListLength[0]);
             setMaxDaily(timeListLength[0]);
         }
     };
 
-
-
-    // Przenieś funkcję countOccurrences poza useEffect
     const countOccurrences = (data) => {
         const occurrenceCount = {};
+
+        const monthKey = months[selectedMonth];
 
         data.forEach((item) => {
             const date = item.date;
             const pillId = item.id;
+            const entryMonth = date.split("-")[1]; // Wyciągnięcie miesiąca z daty
 
-            console.log(selectedPillId)
-            console.log(pillId)
-
-            if (pillId === selectedPillId) {
+            if (pillId === selectedPillId && entryMonth === monthKey) {
                 if (occurrenceCount[date]) {
                     occurrenceCount[date] += 1;
                 } else {
@@ -104,7 +108,6 @@ const TablePillsMonthlyReport = () => {
             }
         });
 
-        // Zaktualizuj stan occurrenceCount
         setOccurrenceCount(occurrenceCount);
     };
 
@@ -119,18 +122,15 @@ const TablePillsMonthlyReport = () => {
                     <th scope="col" className="header-cell">Data</th>
                     <th scope="col" className="header-cell">Liczba wziętych tabletek</th>
                     <th scope="col" className="header-cell">Liczba planowanych tabletek</th>
-
                 </tr>
                 </thead>
                 <tbody>
-                {/* Iteruj przez occurrenceCount i wyświetl wyniki w tabeli */}
                 {Object.keys(occurrenceCount).map((date, index) => (
                     <tr key={index}>
                         <th className="center-cell" scope="row">{index + 1}</th>
                         <td className="center-cell">{date}</td>
                         <td className="center-cell">{occurrenceCount[date]}</td>
                         <td className="center-cell">{maxDaily}</td>
-
                     </tr>
                 ))}
                 </tbody>

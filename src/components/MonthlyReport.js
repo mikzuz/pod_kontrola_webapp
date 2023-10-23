@@ -42,20 +42,20 @@ const MonthlyReport = () => {
         setChartOptions(options);
     }, []);
 
-    const months = [
-        'Styczeń',
-        'Luty',
-        'Marzec',
-        'Kwiecień',
-        'Maj',
-        'Czerwiec',
-        'Lipiec',
-        'Sierpień',
-        'Wrzesień',
-        'Październik',
-        'Listopad',
-        'Grudzień',
-    ];
+    const months = {
+        'Styczeń': '01',
+        'Luty': '02',
+        'Marzec': '03',
+        'Kwiecień': '04',
+        'Maj': '05',
+        'Czerwiec': '06',
+        'Lipiec': '07',
+        'Sierpień': '08',
+        'Wrzesień': '09',
+        'Październik': '10',
+        'Listopad': '11',
+        'Grudzień': '12',
+    };
 
     const parameters = {
         'Aktywność': 'Aktywność',
@@ -90,11 +90,12 @@ const MonthlyReport = () => {
             const selectedPillData = pillsData.find((pill) => pill.name === selectedPill);
             if (selectedPillData) {
                 const selectedPillId = selectedPillData.id;
-                navigate(`/tabletpillsmonthlyreport/${selectedPillId}`);
+                navigate(`/tabletpillsmonthlyreport/${selectedPillId}/${selectedMonth}`); // Dodaj selectedMonth do routera
                 console.log(selectedPillId);
             }
         }
     };
+
 
     useEffect(() => {
         const pillsRef = ref(database, 'Pills');
@@ -143,33 +144,18 @@ const MonthlyReport = () => {
     useEffect(() => {
         if (selectedParameter && selectedMonth && reportData.length > 0) {
             const parameterKey = parameters[selectedParameter];
-            const unit = getUnitForParameter(selectedParameter);
-
-            const monthToNumber = {
-                Styczeń: '01',
-                Luty: '02',
-                Marzec: '03',
-                Kwiecień: '04',
-                Maj: '05',
-                Czerwiec: '06',
-                Lipiec: '07',
-                Sierpień: '08',
-                Wrzesień: '09',
-                Październik: '10',
-                Listopad: '11',
-                Grudzień: '12',
-            };
+            const monthKey = months[selectedMonth];
 
             const filteredData = reportData.filter((entry) => {
-                const formattedSelectedMonth = monthToNumber[selectedMonth];
+                // Zakładam, że format daty jest "DD.MM.YYYY", dostosuj to do rzeczywistego formatu daty
                 return (
-                    entry.date.includes(`. ${formattedSelectedMonth}.`) &&
+                    entry.date.includes(`-${monthKey}-`) &&
                     typeof entry[parameterKey] !== 'undefined'
                 );
             });
 
             const dataForSelectedParameter = filteredData.map((entry) => ({
-                x: new Date(entry.date),
+                x: new Date(entry.date), // Zakładam, że data jest w poprawnym formacie
                 y: parseFloat(entry[parameterKey]),
             }));
 
@@ -181,7 +167,7 @@ const MonthlyReport = () => {
 
             setChartOptions(updatedOptions);
         }
-    }, [selectedParameter, selectedMonth, reportData]);
+    }, [selectedParameter, selectedMonth, reportData, chartOptions]);
 
     return (
         <div>
@@ -205,9 +191,10 @@ const MonthlyReport = () => {
                                         as="select"
                                         custom
                                         value={selectedMonth}
+                                        style={{ width: '100%' }}
                                         onChange={(e) => setSelectedMonth(e.target.value)}
                                     >
-                                        {months.map((month, index) => (
+                                        {Object.keys(months).map((month, index) => (
                                             <option key={index} value={month}>
                                                 {month}
                                             </option>
@@ -234,6 +221,7 @@ const MonthlyReport = () => {
                                         style={{ width: '100%' }}
                                         onChange={(e) => setSelectedPill(e.target.value)}
                                     >
+                                        <option value="">Wybierz lek</option> {/* Dodaj opcję "Wybierz lek" */}
                                         {pillsData.map((pill, index) => (
                                             <option key={index} value={pill.name}>
                                                 {pill.name}
