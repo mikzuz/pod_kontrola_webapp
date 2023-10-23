@@ -4,12 +4,12 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import Typography from '@mui/material/Typography';
 import { IconButton, List, ListItem, ListItemText, styled, Button } from "@mui/material";
-// import CollapsibleExample from './NavbarNew'; // Zaimportuj komponent
-import Navbar from './Navbar';
 import {auth} from './firebase-config';
-import { getDatabase, ref, query, orderByChild, equalTo, onValue, get, remove, set } from 'firebase/database';
+import { ref, query, orderByChild, equalTo, onValue, get, remove, set } from 'firebase/database';
 import {useEffect, useState} from "react";
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import {useNavigate} from "react-router-dom";
+import { database } from "./firebase-config";
 
 const MainPage = () => {
 
@@ -22,16 +22,16 @@ const MainPage = () => {
     });
 
     const userId = auth.currentUser.uid;
-    const db = getDatabase();
     const [patientList, setPatientList] = useState([]);
     const [activePatient, setActivePatient] = useState(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         getDataFromDatabase();
     }, []);
 
     const getDataFromDatabase = () => {
-        const doctorRef = ref(db, "Patients");
+        const doctorRef = ref(database, "Patients");
         const queryRef = query(doctorRef, orderByChild("doctor"), equalTo(userId));
 
         onValue(queryRef, (snapshot) => {
@@ -45,7 +45,7 @@ const MainPage = () => {
     };
 
     const getPatientFromDatabase = (patientId) => {
-        const patientRef = ref(db, `Users/${patientId}`);
+        const patientRef = ref(database, `Users/${patientId}`);
 
         // Pobranie danych
         get(patientRef)
@@ -60,14 +60,13 @@ const MainPage = () => {
     }
 
     const deletePatient = (patientId) => {
-        console.log(patientId)
-        const patientsRef = ref(db, 'Patients');
+        const patientsRef = ref(database, 'Patients');
 
         get(patientsRef).then((snapshot) => {
             if (snapshot.exists()) {
                 const patients = snapshot.val();
                 const matchingPatients = Object.keys(patients).filter(key => patients[key].patient === patientId);
-                const patientRef = ref(db, `Patients/${matchingPatients[0]}`);
+                const patientRef = ref(database, `Patients/${matchingPatients[0]}`);
                 remove(patientRef).then(() => {
                     console.log(`Usunięto pacjenta o id ${patientId}`);
                 }).catch((error) => {
@@ -82,7 +81,7 @@ const MainPage = () => {
     const addPatient = () => {
         const id = new Date().getTime().toString();
 
-        set(ref(db, 'Patients/' + id), {
+        set(ref(database, 'Patients/' + id), {
             doctor: userId,
             id: id,
             patient: "aaaaaaaaaaaaa"
@@ -100,11 +99,11 @@ const MainPage = () => {
     };
 
     const showMonthlyReport = () => {
-
+        navigate("/monthlyReport")
     }
 
-    const showPillsList = () => {
-
+    const showPillsList = (patientId) => {
+        navigate(`/pillsList/${patientId}`);
     }
 
     const Demo = styled('div')(({ theme }) => ({
@@ -119,8 +118,11 @@ const MainPage = () => {
                 <Typography gutterBottom variant="subtitle1" component="div" style={{ marginTop: "10px" }}>
                     Poniżej znajduje się lista Twoich pacjentów.
                 </Typography>
-                <Typography gutterBottom variant="subtitle1" component="div" style={{ marginBottom: "20px" }}>
-                    Pod Kontrolą pozwala Ci na bieżąco monitorować ich stan zdrowia dzięki raportom oraz szybko reagować na niepokojące zmiany poprzez edycję listy leków.
+                <Typography gutterBottom variant="subtitle1" component="div" style={{ marginTop: "10px" }}>
+                    Jeśli nie jest ona aktualna w każdej chwili możesz ją edytować, dodając lub usuwając z niej podopiecznych.
+                </Typography>
+                <Typography gutterBottom variant="subtitle1" component="div" style={{ marginBottom: "20px", textAlign: "center" }}>
+                    Pod Kontrolą pozwala Ci na bieżąco monitorować stan zdrowia Twoich pacjentów, dzięki wypełnianym przez podopiecznych raportom, oraz szybko reagować na niepokojące zmiany poprzez edycję listy zażywanych leków.
                 </Typography>
 
             <div style={{display: "flex", minWidth: "600px", gap: "30px", justifyContent: "center", alignItems: "center", flexDirection: "row"}}>
@@ -141,8 +143,8 @@ const MainPage = () => {
                                 </IconButton>
                                 </ListItem>
                                 <div className="options" style={{display: patientName[1] === activePatient ? 'flex' : 'none', height: "40px", justifyContent: "center", alignItems: "center"}}>
-                                    <Button variant="outlined" style={{margin: "0 10px"}} onClick={() => {showMonthlyReport()}}>Raport miesięczny</Button>
-                                    <Button variant="outlined" style={{margin: "0 10px"}} onClick={() => {showPillsList()}}>Lista leków pacjenta</Button>
+                                    <Button variant="outlined" style={{margin: "0 10px"}} onClick={showMonthlyReport}>Zobacz raport</Button>
+                                    <Button variant="outlined" style={{margin: "0 10px"}} onClick={() => {showPillsList(patientName[1])}}>Lista leków pacjenta</Button>
                                 </div>
                             </div>
                         ))}
