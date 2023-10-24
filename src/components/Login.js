@@ -88,7 +88,7 @@ export default function Auth(props) {
             setRegisterEmail(""); // Wyczyszczenie pola email
             setRegisterPassword(""); // Wyczyszczenie pola hasło
         }
-    }
+    };
 
     /**
      * Funkcja do logowania użytkownika.

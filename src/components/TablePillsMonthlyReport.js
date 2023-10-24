@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import CollapsibleExample from "./NavbarNew";
 import "../TablePillsMonthlyReport.css";
 import { useParams } from "react-router-dom";
 import { equalTo, onValue, orderByChild, query, ref, get } from "firebase/database";
@@ -113,7 +112,6 @@ const TablePillsMonthlyReport = () => {
 
     return (
         <div>
-            <CollapsibleExample />
 
             <table className="table">
                 <thead>
