@@ -3,8 +3,10 @@ import "../TablePillsMonthlyReport.css";
 import { useParams } from "react-router-dom";
 import { equalTo, onValue, orderByChild, query, ref, get } from "firebase/database";
 import { database } from "./firebase-config";
+import Navbar from "./Navbar";
 
 const TablePillsMonthlyReport = () => {
+    const { patientId } = useParams();
     const { selectedPillId, selectedMonth } = useParams();
     const [occurrenceCount, setOccurrenceCount] = useState({});
     const [maxDaily, setMaxDaily] = useState(0); // Inicjalizacja jako liczba
@@ -28,7 +30,7 @@ const TablePillsMonthlyReport = () => {
         if (selectedPillId) {
             const pillsRef = ref(database, 'Pills_status');
 
-            const userStatsQueryByPacient = query(pillsRef, orderByChild('user'), equalTo('qjETQt3F6qgSuKTSZtmBv10MJmY2'));
+            const userStatsQueryByPacient = query(pillsRef, orderByChild('user'), equalTo(patientId));
             const userStatsQueryById = query(pillsRef, orderByChild('id'), equalTo(selectedPillId));
 
             Promise.all([
@@ -55,7 +57,7 @@ const TablePillsMonthlyReport = () => {
         if (selectedPillId) {
             const pillsRef = ref(database, 'Pills');
 
-            const userStatsQueryByPacient = query(pillsRef, orderByChild('pacient'), equalTo('qjETQt3F6qgSuKTSZtmBv10MJmY2'));
+            const userStatsQueryByPacient = query(pillsRef, orderByChild('pacient'), equalTo(patientId));
             const userStatsQueryById = query(pillsRef, orderByChild('id'), equalTo(selectedPillId));
 
             Promise.all([
@@ -112,7 +114,7 @@ const TablePillsMonthlyReport = () => {
 
     return (
         <div>
-
+            <Navbar/>
             <table className="table">
                 <thead>
                 <tr>

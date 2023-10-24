@@ -1,21 +1,26 @@
 import {AppBar, Toolbar, Typography} from "@mui/material";
-import {Link, useNavigate} from "react-router-dom";
+import {Link, useNavigate, useParams} from "react-router-dom";
 import {styled} from '@mui/material/styles';
 // import {logOut} from "../Firebase";
 // import {useContext} from "react";
 // import AuthContext from "../AuthContext";
 import {ToastContainer} from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
+import { createTheme, ThemeProvider, useTheme } from '@mui/material/styles';
 
 
-const Navbar = () => {
 
+
+const Navbar = ({ uid }) => {
     let navigate = useNavigate();
-    // const {user} = useContext(AuthContext);
 
     const handleLogOut = async () => {
         // await logOut();
         navigate("/")
+    };
+
+    const handleNotificationsClick = async () => {
+        navigate(`/notifications/${uid}`);
     };
 
     const CustomAppBar = styled(AppBar)`background-color: #8ed1fc;`;
@@ -29,7 +34,7 @@ const Navbar = () => {
                     <CustomAppBar position="static">
                         <Toolbar variant="dense" sx={{justifyContent: "space-evenly"}}>
                             <div>
-                                <LinkNotUnderlined to="/">
+                                <LinkNotUnderlined to={`/notifications/${uid}`} onClick={() => handleNotificationsClick(uid)}>
                                     <WhiteTypography variant="h6">
                                         Powiadomienia
                                     </WhiteTypography>

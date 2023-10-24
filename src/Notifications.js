@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { equalTo, onValue, orderByChild, query, ref, update } from "firebase/database";
-import { database } from "./firebase-config";
+import { database } from "./components/firebase-config";
 import { Card, CardContent, Typography } from '@mui/material';
+import Navbar from "./components/Navbar";
 
 const containerStyle = {
     display: "flex",
@@ -47,8 +48,10 @@ const Notifications = () => {
     };
 
     return (
+        <div>
+        <Navbar uid={uid} />
         <div style={containerStyle}>
-            {notificationsData.map((notification, index) => (
+        {notificationsData.map((notification, index) => (
                 <Card key={index} variant="outlined" style={cardStyle(!notification.seen)} onClick={() => handleCardClick(notification)}>
                     <CardContent>
                         <Typography variant="h6" gutterBottom>
@@ -60,6 +63,7 @@ const Notifications = () => {
                     </CardContent>
                 </Card>
             ))}
+        </div>
         </div>
     );
 };

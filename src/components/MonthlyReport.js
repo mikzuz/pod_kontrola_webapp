@@ -5,7 +5,8 @@ import CollapsibleExample from './NavbarNew';
 import { database } from './firebase-config';
 import { ref } from 'firebase/database';
 import { query, orderByChild, equalTo, onValue } from 'firebase/database';
-import { useNavigate } from 'react-router-dom';
+import {useNavigate, useParams} from 'react-router-dom';
+import Navbar from "./Navbar";
 
 const CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
@@ -16,6 +17,8 @@ const MonthlyReport = () => {
     const [selectedParameter, setSelectedParameter] = useState('');
     const [pillsData, setPillsData] = useState([]);
     const [reportData, setReportData] = useState([]);
+    const { patientId } = useParams();
+
 
     useEffect(() => {
         const options = {
@@ -90,7 +93,7 @@ const MonthlyReport = () => {
             const selectedPillData = pillsData.find((pill) => pill.name === selectedPill);
             if (selectedPillData) {
                 const selectedPillId = selectedPillData.id;
-                navigate(`/tabletpillsmonthlyreport/${selectedPillId}/${selectedMonth}`); // Dodaj selectedMonth do routera
+                navigate(`/tabletpillsmonthlyreport/${patientId}/${selectedPillId}/${selectedMonth}`); // Dodaj selectedMonth do routera
                 console.log(selectedPillId);
             }
         }
@@ -99,7 +102,7 @@ const MonthlyReport = () => {
 
     useEffect(() => {
         const pillsRef = ref(database, 'Pills');
-        const userStatsQuery = query(pillsRef, orderByChild('pacient'), equalTo('qjETQt3F6qgSuKTSZtmBv10MJmY2'));
+        const userStatsQuery = query(pillsRef, orderByChild('pacient'), equalTo(patientId));
         onValue(userStatsQuery, (snapshot) => {
             if (snapshot.exists()) {
                 const stats = snapshot.val();
@@ -131,7 +134,7 @@ const MonthlyReport = () => {
 
     useEffect(() => {
         const reportsRef = ref(database, 'report');
-        const userStatsQuery = query(reportsRef, orderByChild('user'), equalTo('qjETQt3F6qgSuKTSZtmBv10MJmY2'));
+        const userStatsQuery = query(reportsRef, orderByChild('user'), equalTo(patientId));
         onValue(userStatsQuery, (snapshot) => {
             if (snapshot.exists()) {
                 const report = snapshot.val();
@@ -171,15 +174,7 @@ const MonthlyReport = () => {
 
     return (
         <div>
-            <CollapsibleExample />
-            <Container>
-                <Row className="bg-primary text-white">
-                    <Col>
-                        <h2>Miesięczny raport</h2>
-                    </Col>
-                </Row>
-            </Container>
-
+            <Navbar/>
             <Container>
                 <Row>
                     <div className="bg-light mt-3">

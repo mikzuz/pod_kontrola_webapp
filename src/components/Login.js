@@ -3,11 +3,13 @@
  * @module Auth
  */
 
-import React, {useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut} from 'firebase/auth';
 import {auth} from './firebase-config';
 import {Navigate, useNavigate} from "react-router-dom";
 import "../Auth.css";
+import { UserContext } from "../UserContext";
+
 
 /**
  * Hook używany do zarządzania autoryzacją.
@@ -67,6 +69,9 @@ export default function Auth(props) {
         setAuthMode(authMode === "signin" ? "signup" : "signin");
     };
 
+    const { setUid } = useContext(UserContext); // Pobranie funkcji setUid z kontekstu
+
+
     /**
      * Funkcja do rejestracji użytkownika.
      */
@@ -81,7 +86,9 @@ export default function Auth(props) {
             setUser(newUser); // Ustawienie użytkownika
             setAuthenticated(true);
             localStorage.setItem("authenticated", true);
+            setUid(newUser.uid); // Ustawienie uid w kontekście
             navigate(`/mainPage/${newUser.uid}`); // Przekierowanie z UID
+
         } catch (error) {
             console.log(error.message);
             alert("Wprowadzono niepoprawne dane!");
@@ -89,6 +96,7 @@ export default function Auth(props) {
             setRegisterPassword(""); // Wyczyszczenie pola hasło
         }
     };
+
 
     /**
      * Funkcja do logowania użytkownika.

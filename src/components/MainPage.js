@@ -8,21 +8,14 @@ import {auth} from './firebase-config';
 import { ref, query, orderByChild, equalTo, onValue, get, remove, set } from 'firebase/database';
 import {useEffect, useState} from "react";
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import { database } from "./firebase-config";
+import Notifications from "../Notifications";
+import Navbar from "./Navbar";
 
 const MainPage = () => {
 
     const { uid } = useParams();
-    const navigate = useNavigate();
-
-
-    console.log(uid);
-
-    function generate(element) {
-        return [0, 1, 2].map((value) =>
-            React.cloneElement(element, {
-                key: value,
 
     const theme = createTheme({
         palette: {
@@ -30,16 +23,36 @@ const MainPage = () => {
                 main: '#8ed1fc',
             },
         },
+        props: {
+            // Przekaż `uid` do motywu
+            MuiButtonBase: {
+                uid: uid,
+            },
+        },
     });
 
+    const navigate = useNavigate();
     const userId = auth.currentUser.uid;
     const [patientList, setPatientList] = useState([]);
     const [activePatient, setActivePatient] = useState(null);
-    const navigate = useNavigate();
 
     useEffect(() => {
         getDataFromDatabase();
     }, []);
+
+
+    console.log(uid);
+
+    // function generate(element) {
+    //     return [0, 1, 2].map((value) =>
+    //         React.cloneElement(element, {
+    //             key: value,
+    //
+    //
+    //
+    // useEffect(() => {
+    //     getDataFromDatabase();
+    // }, []);
 
     const getDataFromDatabase = () => {
         const doctorRef = ref(database, "Patients");
@@ -109,8 +122,8 @@ const MainPage = () => {
         }
     };
 
-    const showMonthlyReport = () => {
-        navigate("/monthlyReport")
+    const showMonthlyReport = (patientId) => {
+        navigate(`/monthlyReport/${patientId}`);
     }
 
     const showPillsList = (patientId) => {
@@ -122,17 +135,16 @@ const MainPage = () => {
     }));
 
     const handleNotificationsClick = () => {
-        // Tutaj możesz dodać dowolną logikę związaną z obsługą kliknięcia na przycisku "Przejdź do Powiadomień".
-        // Na przykład, można wykonać jakieś operacje lub po prostu przekierować użytkownika.
-
-        // Przekierowanie użytkownika do widoku "Powiadomienia" z właściwym `uid`.
         navigate(`/notifications/${uid}`);
     };
 
+
     return (
         <div>
-            <ThemeProvider theme={theme}>
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginTop: "40px" }}>
+            <ThemeProvider theme={theme} uid={uid} >
+                <Navbar uid={uid} />
+
+                <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginTop: "40px" }}>
                 <h1 style={{ margin: "20px 40px" }}>Lista pacjentów</h1>
                 <Typography gutterBottom variant="subtitle1" component="div" style={{ marginTop: "10px" }}>
                     Poniżej znajduje się lista Twoich pacjentów.
@@ -162,7 +174,13 @@ const MainPage = () => {
                                 </IconButton>
                                 </ListItem>
                                 <div className="options" style={{display: patientName[1] === activePatient ? 'flex' : 'none', height: "40px", justifyContent: "center", alignItems: "center"}}>
-                                    <Button variant="outlined" style={{margin: "0 10px"}} onClick={showMonthlyReport}>Zobacz raport</Button>
+                                    <Button
+                                        variant="outlined"
+                                        style={{ margin: "0 10px" }}
+                                        onClick={() => {showMonthlyReport(patientName[1]);}}
+                                    >
+                                        Zobacz raport
+                                    </Button>
                                     <Button variant="outlined" style={{margin: "0 10px"}} onClick={() => {showPillsList(patientName[1])}}>Lista leków pacjenta</Button>
                                 </div>
                             </div>
