@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Container, Row, Col, Button, Form } from 'react-bootstrap';
 import CanvasJSReact from '@canvasjs/react-charts';
-import CollapsibleExample from './NavbarNew';
 import { database } from './firebase-config';
 import { ref } from 'firebase/database';
 import { query, orderByChild, equalTo, onValue } from 'firebase/database';
 import {useNavigate, useParams} from 'react-router-dom';
 import Navbar from "./Navbar";
+import NavbarNew from "./NavbarNew";
 
 const CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
@@ -18,6 +18,8 @@ const MonthlyReport = () => {
     const [pillsData, setPillsData] = useState([]);
     const [reportData, setReportData] = useState([]);
     const { patientId } = useParams();
+    const { uid } = useParams();
+
 
 
     useEffect(() => {
@@ -93,7 +95,7 @@ const MonthlyReport = () => {
             const selectedPillData = pillsData.find((pill) => pill.name === selectedPill);
             if (selectedPillData) {
                 const selectedPillId = selectedPillData.id;
-                navigate(`/tabletpillsmonthlyreport/${patientId}/${selectedPillId}/${selectedMonth}`); // Dodaj selectedMonth do routera
+                navigate(`/tabletpillsmonthlyreport/${uid}/${patientId}/${selectedPillId}/${selectedMonth}`); // Dodaj selectedMonth do routera
                 console.log(selectedPillId);
             }
         }
@@ -174,7 +176,7 @@ const MonthlyReport = () => {
 
     return (
         <div>
-            <Navbar/>
+            <Navbar uid={uid} />
             <Container>
                 <Row>
                     <div className="bg-light mt-3">

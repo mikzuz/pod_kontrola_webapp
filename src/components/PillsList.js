@@ -10,8 +10,11 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import {useParams} from "react-router-dom";
 import { database } from "./firebase-config";
 import {useNavigate} from "react-router-dom";
+import Navbar from "./Navbar";
 
 const MainPage = () => {
+
+
 
     const theme = createTheme({
         palette: {
@@ -22,9 +25,11 @@ const MainPage = () => {
     });
 
     let { patientId } = useParams();
+    let { uid } = useParams();
     const [pillsList, setPillsList] = useState([]);
     const [patientName, setPatientName] = useState('');
     const navigate = useNavigate();
+
 
     useEffect(() => {
         getPatientNameFromDatabase()
@@ -103,7 +108,8 @@ const MainPage = () => {
     return (
         <div>
             <ThemeProvider theme={theme}>
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginTop: "40px" }}>
+                <Navbar uid={uid} />
+                <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginTop: "40px" }}>
                 <h1 style={{ margin: "20px 40px 0 40px" }}>Lista leków pacjenta</h1>
                 <h1 style={{ margin: "20px 40px" }}>{patientName}</h1>
                 <Typography gutterBottom variant="subtitle1" component="div" style={{ marginTop: "10px" }}>

@@ -18,10 +18,10 @@ const App = () => {
                 <Routes>
                     <Route path="/" element={<Login />} />
                     <Route path="/mainPage/:uid" element={<MainPage />} />
-                    <Route path="/tabletpillsmonthlyreport/:patientId/:selectedPillId/:selectedMonth" element={<TablePillsMonthlyReport />} />
-                    <Route path="/monthlyReport/:patientId" element={<MonthlyReport />} />
+                    <Route path="/tabletpillsmonthlyreport/:uid/:patientId/:selectedPillId/:selectedMonth" element={<TablePillsMonthlyReport />} />
+                    <Route path="/monthlyReport/:uid/:patientId" element={<MonthlyReport />} />
                     <Route path="/notifications/:uid" element={<Notifications />} />
-                    <Route path="/pillsList/:patientId" element={<PillsList />} />
+                    <Route path="/pillsList/:uid/:patientId" element={<PillsList />} />
                 </Routes>
             </div>
         </Router>

@@ -123,11 +123,11 @@ const MainPage = () => {
     };
 
     const showMonthlyReport = (patientId) => {
-        navigate(`/monthlyReport/${patientId}`);
+        navigate(`/monthlyReport/${uid}/${patientId}`);
     }
 
     const showPillsList = (patientId) => {
-        navigate(`/pillsList/${patientId}`);
+        navigate(`/pillsList/${uid}/${patientId}`);
     }
 
     const Demo = styled('div')(({ theme }) => ({

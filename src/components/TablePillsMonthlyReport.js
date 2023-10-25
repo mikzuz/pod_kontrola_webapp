@@ -6,6 +6,7 @@ import { database } from "./firebase-config";
 import Navbar from "./Navbar";
 
 const TablePillsMonthlyReport = () => {
+    const { uid } = useParams();
     const { patientId } = useParams();
     const { selectedPillId, selectedMonth } = useParams();
     const [occurrenceCount, setOccurrenceCount] = useState({});
@@ -114,7 +115,7 @@ const TablePillsMonthlyReport = () => {
 
     return (
         <div>
-            <Navbar/>
+            <Navbar uid={uid} />
             <table className="table">
                 <thead>
                 <tr>

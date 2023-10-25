@@ -41,14 +41,14 @@ const Navbar = ({ uid }) => {
                                 </LinkNotUnderlined>
                             </div>
                             <div>
-                                <LinkNotUnderlined to="profile">
+                                <LinkNotUnderlined to={`/mainPage/${uid}`}>
                                     <WhiteTypography variant="h6">
                                         Lista pacjentów
                                     </WhiteTypography>
                                 </LinkNotUnderlined>
                             </div>
                             <div>
-                                <LinkNotUnderlined onClick={handleLogOut}>
+                                <LinkNotUnderlined to={`/`} onClick={handleLogOut}>
                                     <WhiteTypography variant="h6">
                                         Wyloguj się
                                     </WhiteTypography>
