@@ -1,8 +1,3 @@
-/**
- * Komponent autoryzacji.
- * @module Auth
- */
-
 import React, {useEffect, useState} from "react";
 import {createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut} from 'firebase/auth';
 import {auth} from './firebase-config';
@@ -11,13 +6,6 @@ import "../Auth.css";
 import {toast} from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 
-/**
- * Hook używany do zarządzania autoryzacją.
- * @returns {Object} - Obiekt zawierający informacje o autoryzacji.
- * @property {boolean} authenticated - Flaga określająca, czy użytkownik jest uwierzytelniony.
- * @property {Object} user - Obiekt reprezentujący aktualnie zalogowanego użytkownika.
- * @property {Function} logout - Funkcja do wylogowywania użytkownika.
- */
 export const useAuth = () => {
     const [authenticated, setAuthenticated] = useState(false);
     const [user, setUser] = useState(null);

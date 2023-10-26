@@ -7,6 +7,7 @@ import MonthlyReport from "./components/MonthlyReport";
 import TablePillsMonthlyReport from "./components/TablePillsMonthlyReport";
 import Navbar from "./components/Navbar";
 import PillsList from "./components/PillsList";
+import AddPatient from "./components/AddPatient";
 
 /**
  * Główny komponent aplikacji.
@@ -23,6 +24,7 @@ const App = () => {
                 <Route path="/tabletpillsmonthlyreport/:selectedPillId" element={<TablePillsMonthlyReport />} />
                 <Route path="/monthlyReport" element={<MonthlyReport />} /> {/* Dodaj ścieżkę do MyComponent */}
                 <Route path="/pillsList/:patientId" element={<PillsList />} />
+                <Route path="/addPatient" element={<AddPatient />} />
             </Routes>
         </div>
     );
