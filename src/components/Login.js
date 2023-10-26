@@ -8,6 +8,8 @@ import {createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut} fro
 import {auth} from './firebase-config';
 import {Navigate, useNavigate} from "react-router-dom";
 import "../Auth.css";
+import {toast} from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 /**
  * Hook używany do zarządzania autoryzacją.
@@ -76,12 +78,11 @@ export default function Auth(props) {
                 registerPassword
             );
 
-            alert("Poprawnie zarejestrowano użytkownika!");
+            toast.info("Poprawnie zarejestrowano użytkownika!");
             setRegisterEmail(""); // Wyczyszczenie pola email
             setRegisterPassword(""); // Wyczyszczenie pola hasło
         } catch (error) {
-
-            alert("Wprowadzono niepoprawne dane!");
+            toast.error("Wprowadzono niepoprawne dane!");
             setRegisterEmail(""); // Wyczyszczenie pola email
             setRegisterPassword(""); // Wyczyszczenie pola hasło
         }
@@ -95,9 +96,9 @@ export default function Auth(props) {
             const user = await signInWithEmailAndPassword(auth, loginEmail, loginPassword);
             setAuthenticated(true)
             localStorage.setItem("authenticated", true);
-            alert("Wprowadzono poprawne dane!");
+            toast.info("Wprowadzono poprawne dane!");
         } catch (error) {
-            alert("Wprowadzono niepoprawne dane!");
+            toast.error("Wprowadzono niepoprawne dane!");
             setLoginEmail(""); // Wyczyszczenie pola email
             setLoginPassword(""); // Wyczyszczenie pola hasło
 
@@ -106,13 +107,6 @@ export default function Auth(props) {
 
     useEffect(() => {
     }, [authenticated]);
-
-    /**
-     * Funkcja do wylogowywania użytkownika.
-     */
-    const logout = async () => {
-        await signOut(auth);
-    };
 
     if (authenticated) {
         return <Navigate to="/mainPage" replace />; // Przekierowanie do "/mainPage" gdy authenticated jest true

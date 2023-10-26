@@ -1,21 +1,28 @@
 import {AppBar, Toolbar, Typography} from "@mui/material";
 import {Link, useNavigate} from "react-router-dom";
 import {styled} from '@mui/material/styles';
-// import {logOut} from "../Firebase";
-// import {useContext} from "react";
-// import AuthContext from "../AuthContext";
-import {ToastContainer} from "react-toastify";
+import {signOut} from "firebase/auth";
+import {auth} from './firebase-config';
+import {ToastContainer, toast} from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
-
 
 const Navbar = () => {
 
     let navigate = useNavigate();
-    // const {user} = useContext(AuthContext);
 
     const handleLogOut = async () => {
-        // await logOut();
+        await logOut();
         navigate("/")
+    };
+
+    const logOut = async () => {
+        try {
+            await signOut(auth)
+            toast.info("Poprawnie wylogowano!")
+            return true
+        } catch (error) {
+            return false
+        }
     };
 
     const CustomAppBar = styled(AppBar)`background-color: #8ed1fc;`;
@@ -36,7 +43,7 @@ const Navbar = () => {
                                 </LinkNotUnderlined>
                             </div>
                             <div>
-                                <LinkNotUnderlined to="profile">
+                                <LinkNotUnderlined to="mainPage">
                                     <WhiteTypography variant="h6">
                                         Lista pacjentów
                                     </WhiteTypography>
@@ -62,7 +69,7 @@ const Navbar = () => {
                     <CustomAppBar position="static">
                         <Toolbar variant="dense" sx={{justifyContent: "space-evenly"}}>
                             <div>
-                                <LinkNotUnderlined to="login">
+                                <LinkNotUnderlined to="/">
                                     <WhiteTypography variant="h6">
                                         Zaloguj się
                                     </WhiteTypography>
