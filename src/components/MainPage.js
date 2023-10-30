@@ -33,7 +33,6 @@ const MainPage = () => {
     });
 
     const navigate = useNavigate();
-    const userId = auth.currentUser.uid;
     const [patientList, setPatientList] = useState([]);
     const [activePatient, setActivePatient] = useState(null);
 
@@ -43,7 +42,7 @@ const MainPage = () => {
 
     const getDataFromDatabase = () => {
         const doctorRef = ref(database, "Patients");
-        const queryRef = query(doctorRef, orderByChild("doctor"), equalTo(userId));
+        const queryRef = query(doctorRef, orderByChild("doctor"), equalTo(uid));
 
         onValue(queryRef, (snapshot) => {
             snapshot.forEach((childSnapshot) => {
@@ -58,7 +57,6 @@ const MainPage = () => {
     const getPatientFromDatabase = (patientId) => {
         const patientRef = ref(database, `Users/${patientId}`);
 
-        // Pobranie danych
         get(patientRef)
             .then((snapshot) => {
                 if (snapshot.exists()) {

@@ -12,9 +12,7 @@ import { database } from "./firebase-config";
 import {useNavigate} from "react-router-dom";
 import Navbar from "./Navbar";
 
-const MainPage = () => {
-
-
+const PillsList = () => {
 
     const theme = createTheme({
         palette: {
@@ -66,23 +64,22 @@ const MainPage = () => {
     }
 
     const deletePill = (pillId) => {
-    //     console.log(patientId)
-    //     const patientsRef = ref(db, 'Patients');
-    //
-    //     get(patientsRef).then((snapshot) => {
-    //         if (snapshot.exists()) {
-    //             const patients = snapshot.val();
-    //             const matchingPatients = Object.keys(patients).filter(key => patients[key].patient === patientId);
-    //             const patientRef = ref(db, `Patients/${matchingPatients[0]}`);
-    //             remove(patientRef).then(() => {
-    //                 console.log(`Usunięto pacjenta o id ${patientId}`);
-    //             }).catch((error) => {
-    //                 console.error('Błąd podczas usuwania:', error);
-    //             });
-    //         }
-    //     }).catch((error) => {
-    //         console.error('Błąd podczas pobierania danych:', error);
-    //     });
+        const pillsRef = ref(database, 'Pills');
+
+        get(pillsRef).then((snapshot) => {
+            if (snapshot.exists()) {
+                const pills = snapshot.val();
+                const matchingPills = Object.keys(pills).filter(key => pills[key].id === pillId);
+                const pillRef = ref(database, `Pills/${matchingPills[0]}`);
+                remove(pillRef).then(() => {
+                    console.log(`Usunięto tabletkę o id ${pillId}`);
+                }).catch((error) => {
+                    console.error('Błąd podczas usuwania:', error);
+                });
+            }
+        }).catch((error) => {
+            console.error('Błąd podczas pobierania danych:', error);
+        });
     };
 
     // const addPatient = () => {
