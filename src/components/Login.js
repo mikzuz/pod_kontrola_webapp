@@ -4,7 +4,7 @@ import {auth} from './firebase-config';
 import {Navigate, useNavigate} from "react-router-dom";
 import "../Auth.css";
 import { UserContext } from "../UserContext";
-import {toast} from "react-toastify";
+import {toast, ToastContainer} from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 
 export const useAuth = () => {
@@ -131,7 +131,6 @@ export default function Auth(props) {
                                 </span>
                             </div>
                             <div className="form-group mt-3">
-                                <label className="auth-label">Email</label>
                                 <input
                                     type="email"
                                     className="form-control mt-1"
@@ -141,7 +140,6 @@ export default function Auth(props) {
                                 />
                             </div>
                             <div className="form-group mt-3">
-                                <label className="auth-label">Hasło</label>
                                 <input
                                     type="password"
                                     className="form-control mt-1"
@@ -159,6 +157,7 @@ export default function Auth(props) {
                         </div>
                     </form>
                     <div id="background2"></div>
+                    <ToastContainer position="top-right"></ToastContainer>
                 </div>
             </>
         );
@@ -205,6 +204,7 @@ export default function Auth(props) {
                     </div>
                 </form>
                 <div id="background2"></div>
+                <ToastContainer position="top-right"></ToastContainer>
             </div>
         </>
     );

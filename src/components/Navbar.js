@@ -1,14 +1,10 @@
 import {AppBar, Toolbar, Typography} from "@mui/material";
-import {Link, useNavigate, useParams} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import {styled} from '@mui/material/styles';
 import {signOut} from "firebase/auth";
 import {auth} from './firebase-config';
 import {ToastContainer, toast} from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
-import { createTheme, ThemeProvider, useTheme } from '@mui/material/styles';
-
-
-
 
 const Navbar = ({ uid }) => {
     let navigate = useNavigate();

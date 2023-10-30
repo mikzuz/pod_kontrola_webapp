@@ -5,13 +5,14 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import Typography from '@mui/material/Typography';
 import { IconButton, List, ListItem, ListItemText, styled, Button } from "@mui/material";
 import {auth} from './firebase-config';
-import { ref, query, orderByChild, equalTo, onValue, get, remove, set } from 'firebase/database';
+import { ref, query, orderByChild, equalTo, onValue, get, remove } from 'firebase/database';
 import {useEffect, useState} from "react";
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import {useNavigate, useParams} from "react-router-dom";
 import { database } from "./firebase-config";
-import Notifications from "../Notifications";
 import Navbar from "./Navbar";
+import {toast} from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 const MainPage = () => {
 
@@ -39,20 +40,6 @@ const MainPage = () => {
     useEffect(() => {
         getDataFromDatabase();
     }, []);
-
-
-    console.log(uid);
-
-    // function generate(element) {
-    //     return [0, 1, 2].map((value) =>
-    //         React.cloneElement(element, {
-    //             key: value,
-    //
-    //
-    //
-    // useEffect(() => {
-    //     getDataFromDatabase();
-    // }, []);
 
     const getDataFromDatabase = () => {
         const doctorRef = ref(database, "Patients");
@@ -103,7 +90,7 @@ const MainPage = () => {
     };
 
     const addPatient = () => {
-        navigate(`/addPatient`);
+        navigate(`/addPatient/${uid}`);
     };
 
     const showOptions = (patientId) => {
