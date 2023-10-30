@@ -1,26 +1,31 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { equalTo, onValue, orderByChild, query, ref, update } from "firebase/database";
 import { database } from "./components/firebase-config";
-import { Card, CardContent, Typography } from '@mui/material';
+import { Card, CardContent, Typography, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 import Navbar from "./components/Navbar";
 
 const containerStyle = {
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
+    marginTop: "40px",
+
 };
 
 const cardStyle = (isUnseen) => ({
     marginBottom: "10px",
     width: "auto",
     backgroundColor: isUnseen ? "#8ed1fc" : "white",
-    cursor: 'pointer', // Dodajemy kursor "pointer", aby karta była klikalna
+    cursor: 'pointer',
 });
 
 const Notifications = () => {
     const [notificationsData, setNotificationsData] = useState([]);
     const { uid } = useParams();
+    const navigate = useNavigate();
+    const [selectedNotification, setSelectedNotification] = useState(null);
+    const [dialogOpen, setDialogOpen] = useState(false);
 
     useEffect(() => {
         if (uid) {
@@ -38,32 +43,64 @@ const Notifications = () => {
 
     const handleCardClick = (notification) => {
         if (!notification.seen) {
-            // Jeśli seen jest false, aktualizuj wartość seen na true w bazie danych
             const notificationRef = ref(database, `Notifications/${notification.id}`);
             const updates = {
                 seen: true,
             };
             update(notificationRef, updates);
         }
+
+        setSelectedNotification(notification);
+        setDialogOpen(true);
     };
+
+    const handleDialogClose = () => {
+        setDialogOpen(false);
+    };
+
+    const handleDialogConfirm = () => {
+        setDialogOpen(false);
+        if (selectedNotification) {
+            const { recipient, pacient } = selectedNotification;
+            navigate(`/monthlyReport/${recipient}/${pacient}`);
+        }
+    };
+
 
     return (
         <div>
-        <Navbar uid={uid} />
-        <div style={containerStyle}>
-        {notificationsData.map((notification, index) => (
-                <Card key={index} variant="outlined" style={cardStyle(!notification.seen)} onClick={() => handleCardClick(notification)}>
-                    <CardContent>
-                        <Typography variant="h6" gutterBottom>
-                            Data: {notification.date}
-                        </Typography>
-                        <Typography variant="body2" color="textSecondary">
-                            Wiadomość: {notification.message}
-                        </Typography>
-                    </CardContent>
-                </Card>
-            ))}
-        </div>
+            <Navbar uid={uid} />
+            <div style={containerStyle}>
+                {notificationsData.map((notification, index) => (
+                    <Card key={index} variant="outlined" style={cardStyle(!notification.seen)} onClick={() => handleCardClick(notification)}>
+                        <CardContent>
+                            <Typography variant="h6" gutterBottom>
+                                Data: {notification.date}
+                            </Typography>
+                            <Typography variant="body2" color="textSecondary">
+                                Wiadomość: {notification.message}
+                            </Typography>
+                        </CardContent>
+                    </Card>
+                ))}
+            </div>
+
+            <Dialog open={dialogOpen} onClose={handleDialogClose}>
+                <DialogTitle>Czy chcesz przejść do miesięcznego raportu pacjenta?</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        Kliknięcie "Tak" przekieruje cię do miesięcznego raportu pacjenta.
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleDialogClose} color="primary">
+                        Anuluj
+                    </Button>
+                    <Button onClick={handleDialogConfirm} color="primary">
+                        Tak
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </div>
     );
 };

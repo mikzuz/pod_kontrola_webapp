@@ -5,14 +5,10 @@ import "./App.css";
 import Login from "./components/Login";
 import MonthlyReport from "./components/MonthlyReport";
 import TablePillsMonthlyReport from "./components/TablePillsMonthlyReport";
-import Navbar from "./components/Navbar";
 import PillsList from "./components/PillsList";
 import AddPatient from "./components/AddPatient";
-import React, { useEffect, useState } from 'react';
-import {BrowserRouter as Router, Route, Routes, useNavigate} from 'react-router-dom';
+import {BrowserRouter as Router} from 'react-router-dom';
 import Notifications from './Notifications';
-import MonthlyReport from './components/MonthlyReport';
-import TablePillsMonthlyReport from './components/TablePillsMonthlyReport';
 
 const App = () => {
 
