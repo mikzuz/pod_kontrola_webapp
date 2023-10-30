@@ -148,4 +148,4 @@ const PillsList = () => {
     );
 };
 
-export default MainPage;
+export default PillsList;
