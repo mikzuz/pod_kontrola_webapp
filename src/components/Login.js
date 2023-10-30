@@ -1,23 +1,12 @@
-/**
- * Komponent autoryzacji.
- * @module Auth
- */
-
-import React, {useContext, useEffect, useState} from "react";
+import React, {useEffect, useState, useContext} from "react";
 import {createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut} from 'firebase/auth';
 import {auth} from './firebase-config';
 import {Navigate, useNavigate} from "react-router-dom";
 import "../Auth.css";
 import { UserContext } from "../UserContext";
+import {toast} from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
-
-/**
- * Hook używany do zarządzania autoryzacją.
- * @returns {Object} - Obiekt zawierający informacje o autoryzacji.
- * @property {boolean} authenticated - Flaga określająca, czy użytkownik jest uwierzytelniony.
- * @property {Object} user - Obiekt reprezentujący aktualnie zalogowanego użytkownika.
- * @property {Function} logout - Funkcja do wylogowywania użytkownika.
- */
 export const useAuth = () => {
     const [authenticated, setAuthenticated] = useState(false);
     const [user, setUser] = useState(null);
@@ -89,14 +78,15 @@ export default function Auth(props) {
             setUid(newUser.uid); // Ustawienie uid w kontekście
             navigate(`/mainPage/${newUser.uid}`); // Przekierowanie z UID
 
+            toast.info("Poprawnie zarejestrowano użytkownika!");
+            setRegisterEmail(""); // Wyczyszczenie pola email
+            setRegisterPassword(""); // Wyczyszczenie pola hasło
         } catch (error) {
-            console.log(error.message);
-            alert("Wprowadzono niepoprawne dane!");
+            toast.error("Wprowadzono niepoprawne dane!");
             setRegisterEmail(""); // Wyczyszczenie pola email
             setRegisterPassword(""); // Wyczyszczenie pola hasło
         }
     };
-
 
     /**
      * Funkcja do logowania użytkownika.
@@ -108,25 +98,18 @@ export default function Auth(props) {
             setUser(loggedInUser); // Ustawienie użytkownika
             setAuthenticated(true);
             localStorage.setItem("authenticated", true);
+            toast.info("Wprowadzono poprawne dane!");
             navigate(`/mainPage/${loggedInUser.uid}`); // Przekierowanie z UID
         } catch (error) {
-            console.log(error.message);
-            alert("Wprowadzono niepoprawne dane!");
+            toast.error("Wprowadzono niepoprawne dane!");
             setLoginEmail(""); // Wyczyszczenie pola email
             setLoginPassword(""); // Wyczyszczenie pola hasło
+
         }
-    }
+    };
 
     useEffect(() => {
-        console.log(authenticated);
     }, [authenticated]);
-
-    /**
-     * Funkcja do wylogowywania użytkownika.
-     */
-    const logout = async () => {
-        await signOut(auth);
-    };
 
     if (authenticated) {
         return <Navigate to={`/mainPage/${user.uid}`} replace />;

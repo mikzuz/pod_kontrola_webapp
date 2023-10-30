@@ -103,15 +103,7 @@ const MainPage = () => {
     };
 
     const addPatient = () => {
-        const id = new Date().getTime().toString();
-
-        set(ref(database, 'Patients/' + id), {
-            doctor: userId,
-            id: id,
-            patient: "aaaaaaaaaaaaa"
-        }).catch((error) => {
-            console.error('Błąd podczas pobierania danych:', error);
-        });
+        navigate(`/addPatient`);
     };
 
     const showOptions = (patientId) => {
