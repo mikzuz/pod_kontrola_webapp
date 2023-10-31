@@ -9,6 +9,7 @@ import PillsList from "./components/PillsList";
 import AddPatient from "./components/AddPatient";
 import {BrowserRouter as Router} from 'react-router-dom';
 import Notifications from './Notifications';
+import MyCalendar from "./components/MyCalendar";
 
 const App = () => {
 
@@ -23,6 +24,8 @@ const App = () => {
                     <Route path="/notifications/:uid" element={<Notifications />} />
                     <Route path="/pillsList/:uid/:patientId" element={<PillsList />} />
                     <Route path="/addPatient/:uid" element={<AddPatient />} />
+                    <Route path="/calendar/:uid/:patientId/:selectedPillId/:selectedMonth" element={<MyCalendar />} />
+
                 </Routes>
             </div>
         </Router>

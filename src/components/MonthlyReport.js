@@ -95,7 +95,7 @@ const MonthlyReport = () => {
             const selectedPillData = pillsData.find((pill) => pill.name === selectedPill);
             if (selectedPillData) {
                 const selectedPillId = selectedPillData.id;
-                navigate(`/tabletpillsmonthlyreport/${uid}/${patientId}/${selectedPillId}/${selectedMonth}`); // Dodaj selectedMonth do routera
+                navigate(`/calendar/${uid}/${patientId}/${selectedPillId}/${selectedMonth}`); // Dodaj selectedMonth do routera
                 console.log(selectedPillId);
             }
         }
