@@ -85,17 +85,9 @@ const PillsList = () => {
         });
     };
 
-    // const addPatient = () => {
-    //     const id = new Date().getTime().toString();
-    //
-    //     set(ref(db, 'Patients/' + id), {
-    //         doctor: userId,
-    //         id: id,
-    //         patient: "aaaaaaaaaaaaa"
-    //     }).catch((error) => {
-    //         console.error('Błąd podczas pobierania danych:', error);
-    //     });
-    // };
+    const addPill = () => {
+        navigate(`/addPill/${uid}/${patientId}`);
+    };
 
     const handleDialogClose = () => {
         setDialogOpen(false);
@@ -163,7 +155,7 @@ const PillsList = () => {
                             </List>
                         </Demo>
                     </div>
-                    <Button variant="contained" color="blue" style={{margin: "10px"}} onClick={() => {}}>Dodaj lek</Button>
+                    <Button variant="contained" color="blue" style={{margin: "10px"}} onClick={() => {addPill()}}>Dodaj lek</Button>
                 </div>
             </ThemeProvider>
             <Dialog open={dialogOpen} onClose={handleDialogClose}>
