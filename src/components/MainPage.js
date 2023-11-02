@@ -3,8 +3,7 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import DeleteIcon from '@mui/icons-material/Delete';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import Typography from '@mui/material/Typography';
-import { IconButton, List, ListItem, ListItemText, styled, Button } from "@mui/material";
-import {auth} from './firebase-config';
+import {IconButton, List, ListItem, ListItemText, styled, Button, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions} from "@mui/material";
 import { ref, query, orderByChild, equalTo, onValue, get, remove } from 'firebase/database';
 import {useEffect, useState} from "react";
 import { createTheme, ThemeProvider } from '@mui/material/styles';
@@ -35,6 +34,8 @@ const MainPage = () => {
     const navigate = useNavigate();
     const [patientList, setPatientList] = useState([]);
     const [activePatient, setActivePatient] = useState(null);
+    const [dialogOpen, setDialogOpen] = useState(false);
+    const [patientId, setPatientId] = useState('');
 
     useEffect(() => {
         getDataFromDatabase();
@@ -68,7 +69,7 @@ const MainPage = () => {
             });
     }
 
-    const deletePatient = (patientId) => {
+    const deletePatient = () => {
         const patientsRef = ref(database, 'Patients');
 
         get(patientsRef).then((snapshot) => {
@@ -115,6 +116,24 @@ const MainPage = () => {
         navigate(`/notifications/${uid}`);
     };
 
+    const handleDialogClose = () => {
+        setDialogOpen(false);
+    };
+
+    const handleDialogConfirm = () => {
+        setDialogOpen(false);
+        try {
+            deletePatient()
+            toast.success("Poprawnie usunięto pacjenta")
+        } catch {
+            toast.error("Wystąpił błąd przy usuwaniu pacjenta")
+        }
+    };
+
+    const checkIfDeletePatient = (patientId) => {
+        setDialogOpen(true);
+        setPatientId(patientId);
+    }
 
     return (
         <div>
@@ -122,52 +141,68 @@ const MainPage = () => {
                 <Navbar uid={uid} />
 
                 <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginTop: "40px" }}>
-                <h1 style={{ margin: "20px 40px" }}>Lista pacjentów</h1>
-                <Typography gutterBottom variant="subtitle1" component="div" style={{ marginTop: "10px" }}>
-                    Poniżej znajduje się lista Twoich pacjentów.
-                </Typography>
-                <Typography gutterBottom variant="subtitle1" component="div" style={{ marginTop: "10px" }}>
-                    Jeśli nie jest ona aktualna w każdej chwili możesz ją edytować, dodając lub usuwając z niej podopiecznych.
-                </Typography>
-                <Typography gutterBottom variant="subtitle1" component="div" style={{ marginBottom: "20px", textAlign: "center" }}>
-                    Pod Kontrolą pozwala Ci na bieżąco monitorować stan zdrowia Twoich pacjentów, dzięki wypełnianym przez podopiecznych raportom, oraz szybko reagować na niepokojące zmiany poprzez edycję listy zażywanych leków.
-                </Typography>
+                    <h1 style={{ margin: "20px 40px" }}>Lista pacjentów</h1>
+                    <Typography gutterBottom variant="subtitle1" component="div" style={{ marginTop: "10px" }}>
+                        Poniżej znajduje się lista Twoich pacjentów.
+                    </Typography>
+                    <Typography gutterBottom variant="subtitle1" component="div" style={{ marginTop: "10px" }}>
+                        Jeśli nie jest ona aktualna w każdej chwili możesz ją edytować, dodając lub usuwając z niej podopiecznych.
+                    </Typography>
+                    <Typography gutterBottom variant="subtitle1" component="div" style={{ marginBottom: "20px", textAlign: "center" }}>
+                        Pod Kontrolą pozwala Ci na bieżąco monitorować stan zdrowia Twoich pacjentów, dzięki wypełnianym przez podopiecznych raportom, oraz szybko reagować na niepokojące zmiany poprzez edycję listy zażywanych leków.
+                    </Typography>
 
-            <div style={{display: "flex", minWidth: "600px", gap: "30px", justifyContent: "center", alignItems: "center", flexDirection: "row"}}>
-                <Demo style={{minWidth: "inherit"}}>
-                    <List>
-                        {patientList.map((patientName) => (
-                            <div key={patientName}>
-                                <ListItem >
-                                <IconButton disabled>
-                                    <AccountCircleIcon fontSize="large" />
-                                </IconButton>
-                                <ListItemText primary={patientName[0]} />
-                                    <IconButton edge="end" aria-label="more" onClick={() => {showOptions(patientName[1]);}}>
-                                        <MoreVertIcon />
-                                    </IconButton>
-                                <IconButton edge="end" aria-label="delete" style={{ margin: "0 3px" }} onClick={() => {deletePatient(patientName[1]);}}>
-                                    <DeleteIcon />
-                                </IconButton>
-                                </ListItem>
-                                <div className="options" style={{display: patientName[1] === activePatient ? 'flex' : 'none', height: "40px", justifyContent: "center", alignItems: "center"}}>
-                                    <Button
-                                        variant="outlined"
-                                        style={{ margin: "0 10px" }}
-                                        onClick={() => {showMonthlyReport(patientName[1]);}}
-                                    >
-                                        Zobacz raport
-                                    </Button>
-                                    <Button variant="outlined" style={{margin: "0 10px"}} onClick={() => {showPillsList(patientName[1])}}>Lista leków pacjenta</Button>
-                                </div>
-                            </div>
-                        ))}
-                    </List>
-                </Demo>
-            </div>
-            <Button variant="contained" color="blue" style={{margin: "10px"}} onClick={() => {addPatient()}}>Dodaj pacjenta</Button>
-        </div>
+                    <div style={{display: "flex", minWidth: "600px", gap: "30px", justifyContent: "center", alignItems: "center", flexDirection: "row"}}>
+                        <Demo style={{minWidth: "inherit"}}>
+                            <List>
+                                {patientList.map((patientName) => (
+                                    <div key={patientName}>
+                                        <ListItem >
+                                            <IconButton disabled>
+                                                <AccountCircleIcon fontSize="large" />
+                                            </IconButton>
+                                            <ListItemText primary={patientName[0]} />
+                                            <IconButton edge="end" aria-label="more" onClick={() => {showOptions(patientName[1]);}}>
+                                                <MoreVertIcon />
+                                            </IconButton>
+                                            <IconButton edge="end" aria-label="delete" style={{ margin: "0 3px" }} onClick={() => {checkIfDeletePatient(patientName[1]);}}>
+                                                <DeleteIcon />
+                                            </IconButton>
+                                        </ListItem>
+                                        <div className="options" style={{display: patientName[1] === activePatient ? 'flex' : 'none', height: "40px", justifyContent: "center", alignItems: "center"}}>
+                                            <Button
+                                                variant="outlined"
+                                                style={{ margin: "0 10px" }}
+                                                onClick={() => {showMonthlyReport(patientName[1]);}}
+                                            >
+                                                Zobacz raport
+                                            </Button>
+                                            <Button variant="outlined" style={{margin: "0 10px"}} onClick={() => {showPillsList(patientName[1])}}>Lista leków pacjenta</Button>
+                                        </div>
+                                    </div>
+                                ))}
+                            </List>
+                        </Demo>
+                    </div>
+                    <Button variant="contained" color="blue" style={{margin: "10px"}} onClick={() => {addPatient()}}>Dodaj pacjenta</Button>
+                </div>
             </ThemeProvider>
+            <Dialog open={dialogOpen} onClose={handleDialogClose}>
+                <DialogTitle>Czy na pewno chcesz usunąć danego pacjenta?</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        Kliknięcie "Tak" spowoduje nieodwracalne usunięcie danego pacjenta z listy Twoich pacjentów.
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleDialogClose} color="primary">
+                        Nie
+                    </Button>
+                    <Button onClick={handleDialogConfirm} color="primary">
+                        Tak
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </div>
     );
 };
