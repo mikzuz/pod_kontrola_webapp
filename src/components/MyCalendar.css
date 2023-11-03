@@ -1,0 +1,48 @@
+/* Zmiana tła kalendarza */
+.rbc-calendar {
+    background-color: #8ed1fc ;
+}
+
+/* Zmiana koloru tła wydarzeń */
+.rbc-event {
+    background-color: #FFC300;
+}
+
+/* Zmiana koloru tekstu w wydarzeniach */
+.rbc-event-label {
+    color: #FFFFFF;
+}
+
+/* Zmiana koloru dni tygodnia */
+.rbc-row-bg {
+    background-color: #F7F7F7;
+}
+
+/* Zmiana koloru nazw miesięcy na biały */
+.rbc-month-row .rbc-header {
+    color: #fff; /* Kolor tekstu */
+}
+
+/* Zmiana koloru nazw miesięcy na biały */
+.rbc-month-view .rbc-header {
+    color: #fff; /* Kolor tekstu */
+}
+
+/* Zmiana koloru nazw miesięcy na biały */
+.rbc-month-view .rbc-header {
+    color: #fff; /* Kolor tekstu */
+}
+/* Zmiana koloru napisów dla wiadomości w kalendarzu */
+.rbc-month-view .rbc-header {
+    color: #fff; /* Kolor tekstu dla wiadomości */
+}
+/* Zmiana tła widoku tygodnia i dnia kalendarza na szare */
+.rbc-time-view, .rbc-day-view {
+    background-color: #F7F7F7; /* Kolor tła */
+}
+/* Zmiana koloru nazwy miesiąca i dnia na biały w widoku dnia */
+.rbc-time-header-content {
+    color: #fff; /* Biały kolor tekstu */
+}
+
+
