@@ -1,5 +1,5 @@
 import * as React from 'react';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import Typography from '@mui/material/Typography';
@@ -12,6 +12,7 @@ import { database } from "./firebase-config";
 import {useNavigate} from "react-router-dom";
 import Navbar from "./Navbar";
 import {toast} from "react-toastify";
+import MedicationIcon from '@mui/icons-material/Medication';
 
 const PillsList = () => {
 
@@ -109,7 +110,7 @@ const PillsList = () => {
     }
 
     const editPill = (pillId) => {
-        navigate(`/editPill/${pillId}`);
+        navigate(`/editPill/${uid}/${patientId}/${pillId}`);
     }
 
     const Demo = styled('div')(({ theme }) => ({
@@ -140,11 +141,11 @@ const PillsList = () => {
                                     <div key={pillName[1]}>
                                         <ListItem >
                                             <IconButton disabled>
-                                                <AccountCircleIcon fontSize="large" />
+                                                <MedicationIcon fontSize="large" />
                                             </IconButton>
                                             <ListItemText primary={pillName[0]} />
                                             <IconButton edge="end" aria-label="more" onClick={() => {editPill(pillName[1])}}>
-                                                <MoreVertIcon />
+                                                <EditIcon />
                                             </IconButton>
                                             <IconButton edge="end" aria-label="delete" style={{ margin: "0 3px" }} onClick={() => {checkIfDeletePill(pillName[1])}}>
                                                 <DeleteIcon />

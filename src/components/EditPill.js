@@ -13,10 +13,7 @@ import dayjs from 'dayjs';
 import styled from 'styled-components';
 import "./AddPill.css";
 
-// npm install @mui/x-date-pickers
-// npm install styled-components
-
-const AddPill = () => {
+const EditPill = () => {
 
     const StyledMobileTimePicker = styled(MobileTimePicker)`
       border-radius: 6px;
@@ -31,6 +28,7 @@ const AddPill = () => {
     const navigate = useNavigate();
     const { uid } = useParams();
     let { patientId } = useParams();
+    let { selectedPillId } = useParams();
     const [name, setName] = useState("");
     const [time1, setTime1] = useState(dayjs('2022-04-17T15:30'));
     const [time2, setTime2] = useState(dayjs('2022-04-17T15:30'));
@@ -38,13 +36,41 @@ const AddPill = () => {
     const [time, setTime] = useState([time1, time2, time3]);
     const [frequency, setFrequency] = useState("");
     const [amountLeft, setAmountLeft] = useState("");
+    const [amountInBox, setAmountInBox] = useState("");
     const [timesToShow, setTimesToShow] = useState(1);
 
     useEffect(() => {
         setTime([time1, time2, time3]);
     }, [time1, time2, time3]);
 
-    const handleAdd = () => {
+    useEffect(() => {
+        getPill();
+    }, []);
+
+    const getPill = async () => { // METODA DO POBRANIA TABLETKI Z BAZY
+        const pillsRef = ref(database, `Pills/${selectedPillId}`);
+
+        get(pillsRef).then((snapshot) => {
+            if (snapshot.exists()) {
+                const pill = snapshot.val();
+                    setName(pill.name)
+                    setAmountInBox(pill.inBox)
+                    setAmountLeft(pill.availability)
+                    setFrequency(pill.frequency)
+                    //setTime1(matchingPill[0].frequency)
+                    console.log(pill)
+
+                    //editPill();
+            } else {
+                toast.error("Wystąpił błąd przy pobieraniu danych")
+            }
+        }).catch((error) => {
+            console.error('Błąd podczas pobierania danych:', error);
+            return null;
+        });
+    }
+
+    const handleEdit = () => { // TO DO
         if(name === '') {
             toast.error("Nazwa nie może być pusta");
             return;
@@ -59,7 +85,7 @@ const AddPill = () => {
         getPillFromDatabase()
     };
 
-    const addPill = async () => {
+    const editPill = async () => { // TO DO
         const times = getTimeTable();
         const id = new Date().getTime().toString();
         const date = dayjs().format('YYYY-MM-DD');
@@ -97,18 +123,17 @@ const AddPill = () => {
         }
     };
 
-    const getPillFromDatabase = async () => {
+    const getPillFromDatabase = async () => { // ZOSTAJE
         const pillsRef = ref(database, 'Pills');
 
         get(pillsRef).then((snapshot) => {
             if (snapshot.exists()) {
-
                 const pills = snapshot.val();
                 const matchingPill = Object.keys(pills).filter(key => pills[key].name === name);
                 if (matchingPill.length !== 0) {
                     toast.error("Pacjent ma już na swojej liście dany lek")
                 } else {
-                    addPill();
+                    editPill();
                 }
             }
         }).catch((error) => {
@@ -117,13 +142,13 @@ const AddPill = () => {
         });
     }
 
-    const getTimeTable = () => {
+    const getTimeTable = () => { // ZOSTAJE
         return [...Array(timesToShow)].map((_, index) => (
             [time[index].format('HH:mm'), false]
         ));
     };
 
-    const handleDropdownChange = (event) => {
+    const handleDropdownChange = (event) => { // ZOSTAJE
         const newFrequency = event.target.value;
         setFrequency(newFrequency);
 
@@ -140,7 +165,7 @@ const AddPill = () => {
         }
     }
 
-    const handleTimeChange = (newTime, index) => {
+    const handleTimeChange = (newTime, index) => { // ZOSTAJE
         if (index === 0) {
             setTime1(newTime)
         } else if (index === 1) {
@@ -157,7 +182,7 @@ const AddPill = () => {
                 <div id="background1"></div>
                 <form className="Auth-form">
                     <div className="Auth-form-content">
-                        <h3 className="Auth-form-title">Dodaj nowy lek</h3>
+                        <h3 className="Auth-form-title">Edytuj lek</h3>
                         <div className="form-group mt-3" style={{marginBottom: '0.5em'}}>
                             <input
                                 type="firstName"
@@ -167,7 +192,7 @@ const AddPill = () => {
                                 onChange={(event) => {setName(event.target.value)}}
                             />
                         </div>
-                        <label>Wybierz częstotliwość przyjmowania leku</label>
+                        <label>Częstotliwość przyjmowania leku</label>
                         <select className="form-control mt-1" value={frequency} onChange={handleDropdownChange}>
                             <option>Codziennie</option>
                             <option>Dwa razy dziennie</option>
@@ -186,18 +211,29 @@ const AddPill = () => {
                                 />
                             ))}
                         </LocalizationProvider>
-                        <div className="form-group mt-3">
+                        <div className="form-group mt-3" style={{marginBottom: '0.5em'}}>
+                            <label>Ilość tabletek w opakowaniu</label>
                             <input
                                 type="firstName"
                                 className="form-control mt-1"
                                 placeholder="Ilość tabletek w opakowaniu"
+                                value={amountInBox}
+                                onChange={(event) => {setAmountInBox(event.target.value)}}
+                            />
+                        </div>
+                        <div className="form-group mt-3">
+                            <label>Pozostała ilość tabletek w opakowaniu</label>
+                            <input
+                                type="firstName"
+                                className="form-control mt-1"
+                                placeholder="Pozostała ilość tabletek w opakowaniu"
                                 value={amountLeft}
                                 onChange={(event) => {setAmountLeft(event.target.value)}}
                             />
                         </div>
                         <div className="d-grid gap-2 mt-3">
-                            <button className="buttonS" onClick={handleAdd} type="button">
-                                Dodaj
+                            <button className="buttonS" onClick={handleEdit} type="button">
+                                Edytuj
                             </button>
                         </div>
                     </div>
@@ -208,4 +244,4 @@ const AddPill = () => {
     );
 };
 
-export default AddPill;
+export default EditPill;
