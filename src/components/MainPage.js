@@ -12,6 +12,13 @@ import { database } from "./firebase-config";
 import Navbar from "./Navbar";
 import {toast} from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
+import SearchIcon from '@mui/icons-material/Search';
+import Input from '@mui/material/Input';
+import InputLabel from '@mui/material/InputLabel';
+import InputAdornment from '@mui/material/InputAdornment';
+import FormControl from '@mui/material/FormControl';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 const MainPage = () => {
 
@@ -151,6 +158,22 @@ const MainPage = () => {
                     <Typography gutterBottom variant="subtitle1" component="div" style={{ marginBottom: "20px", textAlign: "center" }}>
                         Pod Kontrolą pozwala Ci na bieżąco monitorować stan zdrowia Twoich pacjentów, dzięki wypełnianym przez podopiecznych raportom, oraz szybko reagować na niepokojące zmiany poprzez edycję listy zażywanych leków.
                     </Typography>
+
+                    <div>
+                        <FormControl sx={{ m: 1, width: '25ch' }} variant="standard">
+                            <InputLabel>Wyszukaj</InputLabel>
+                            <Input
+                                id="standard-adornment-password"
+                                endAdornment={
+                                    <InputAdornment position="end">
+                                        <IconButton disabled>
+                                            <SearchIcon fontSize="large" />
+                                        </IconButton>
+                                    </InputAdornment>
+                                }
+                            />
+                        </FormControl>
+                    </div>
 
                     <div style={{display: "flex", minWidth: "600px", gap: "30px", justifyContent: "center", alignItems: "center", flexDirection: "row"}}>
                         <Demo style={{minWidth: "inherit"}}>
