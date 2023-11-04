@@ -68,7 +68,6 @@ const AddPill = () => {
         switch (frequency) {
             case 'Raz w tygodniu':
                 date_next = dayjs().add(7, 'day').format('YYYY-MM-DD');
-                console.log(date_next)
                 break;
             case 'Co drugi dzień':
                 date_next = dayjs().add(2, 'day').format('YYYY-MM-DD');
