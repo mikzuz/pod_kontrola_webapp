@@ -31,7 +31,7 @@ const AddPatient = () => {
     ];
 
     const addPatient = async () => {
-        if(checkIfAlreadyPatient(patientId)) {
+        if(!checkIfAlreadyPatient(patientId)) {
             toast.error("Użytkownik o podanym numerze PESEL już jest Twoim pacjentem")
             return
         };
@@ -44,7 +44,7 @@ const AddPatient = () => {
                     id: id,
                     patient: patientId,
                 })
-                toast.info("Dodano pacjenta!")
+                toast.info("Dodano pacjenta!") //tez sie nie pokazuje
                 navigate(`/mainPage/${uid}`);
             }
         } catch (error) {
@@ -103,7 +103,7 @@ const AddPatient = () => {
             if (snapshot.exists()) {
 
                 const patients = snapshot.val();
-                const matchingPatient = Object.keys(patients).filter(key => patients[key].id === patientId);
+                const matchingPatient = Object.keys(patients).filter(key => patients[key].patient === patientId && patients[key].doctor === uid);
                 if (matchingPatient.length !== 0) {
                     return true;
                 } else {
