@@ -17,6 +17,8 @@ import Input from '@mui/material/Input';
 import InputLabel from '@mui/material/InputLabel';
 import InputAdornment from '@mui/material/InputAdornment';
 import FormControl from '@mui/material/FormControl';
+import NorthIcon from '@mui/icons-material/North';
+import SouthIcon from '@mui/icons-material/South';
 
 const MainPage = () => {
 
@@ -42,6 +44,7 @@ const MainPage = () => {
     const [dialogOpen, setDialogOpen] = useState(false);
     const [patientId, setPatientId] = useState('');
     const [inputValue, setInputValue] = useState('');
+    const [ascending, setAscending] = useState(true);
 
     useEffect(() => {
         getDataFromDatabase();
@@ -130,6 +133,12 @@ const MainPage = () => {
         setFilteredPatientList(filteredList);
     };
 
+    const sort = () => {
+        const sortedNames = patientList.sort((a, b) => a[0].localeCompare(b[0]));
+        setFilteredPatientList(ascending ? sortedNames : sortedNames.reverse());
+        setAscending(!ascending);
+    };
+
     const handleDialogConfirm = () => {
         setDialogOpen(false);
         try {
@@ -158,7 +167,7 @@ const MainPage = () => {
                     <Typography gutterBottom variant="subtitle1" component="div" style={{ marginTop: "10px" }}>
                         Jeśli nie jest ona aktualna w każdej chwili możesz ją edytować, dodając lub usuwając z niej podopiecznych.
                     </Typography>
-                    <Typography gutterBottom variant="subtitle1" component="div" style={{ marginBottom: "20px", textAlign: "center" }}>
+                    <Typography gutterBottom variant="subtitle1" component="div" style={{ textAlign: "center" }}>
                         Pod Kontrolą pozwala Ci na bieżąco monitorować stan zdrowia Twoich pacjentów, dzięki wypełnianym przez podopiecznych raportom, oraz szybko reagować na niepokojące zmiany poprzez edycję listy zażywanych leków.
                     </Typography>
 
@@ -176,6 +185,9 @@ const MainPage = () => {
                                    value={inputValue}
                                    onChange={(event) => setInputValue(event.target.value)}/>
                         </FormControl>
+                        <IconButton edge="end" aria-label="more" style={{ marginTop: "20px", color: "rgba(0, 0, 0, 0.26)" }} onClick={() => {sort();}}>
+                            {ascending ? <NorthIcon /> : <SouthIcon />}
+                        </IconButton>
                     </div>
 
                     <div style={{display: "flex", minWidth: "600px", gap: "30px", justifyContent: "center", alignItems: "center", flexDirection: "row"}}>

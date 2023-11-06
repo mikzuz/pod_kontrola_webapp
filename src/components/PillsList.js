@@ -13,6 +13,13 @@ import {useNavigate} from "react-router-dom";
 import Navbar from "./Navbar";
 import {toast} from "react-toastify";
 import MedicationIcon from '@mui/icons-material/Medication';
+import FormControl from "@mui/material/FormControl";
+import InputLabel from "@mui/material/InputLabel";
+import Input from "@mui/material/Input";
+import InputAdornment from "@mui/material/InputAdornment";
+import SearchIcon from "@mui/icons-material/Search";
+import NorthIcon from "@mui/icons-material/North";
+import SouthIcon from "@mui/icons-material/South";
 
 const PillsList = () => {
 
@@ -30,7 +37,10 @@ const PillsList = () => {
     const [patientName, setPatientName] = useState('');
     const navigate = useNavigate();
     const [dialogOpen, setDialogOpen] = useState(false);
+    const [filteredPillsList, setFilteredPillsList] = useState([]);
     const [pillId, setPillId] = useState('');
+    const [inputValue, setInputValue] = useState('');
+    const [ascending, setAscending] = useState(true);
 
 
     useEffect(() => {
@@ -47,6 +57,7 @@ const PillsList = () => {
                 const pillName = childSnapshot.child("name").val();
                 const pillId = childSnapshot.child("id").val();
                 setPillsList(prevList => [...prevList, [`${pillName}`, `${pillId}`]]);
+                setFilteredPillsList(prevList => [...prevList, [`${pillName}`, `${pillId}`]]);
             });
         }, (error) => {
             console.error('Błąd', error);
@@ -113,6 +124,19 @@ const PillsList = () => {
         navigate(`/editPill/${uid}/${patientId}/${pillId}`);
     }
 
+    const filter = () => {
+        const filteredList = pillsList.filter((patient) =>
+            patient[0].toLowerCase().includes(inputValue.toLowerCase())
+        );
+        setFilteredPillsList(filteredList);
+    };
+
+    const sort = () => {
+        const sortedNames = pillsList.sort((a, b) => a[0].localeCompare(b[0]));
+        setFilteredPillsList(ascending ? sortedNames : sortedNames.reverse());
+        setAscending(!ascending);
+    };
+
     const Demo = styled('div')(({ theme }) => ({
         backgroundColor: theme.palette.background.paper,
     }));
@@ -134,10 +158,29 @@ const PillsList = () => {
                         Pod Kontrolą pozwala Ci szybko reagować na niepokojące zmiany w stanie zdrowia Twoich pacjentów poprzez edycję listy zażywanych leków.
                     </Typography>
 
+                    <div>
+                        <FormControl sx={{ m: 1, width: '25ch' }} variant="standard">
+                            <InputLabel>Wyszukaj</InputLabel>
+                            <Input id="standard-adornment-password"
+                                   onKeyPress={(event) => {if (event.key === 'Enter') {filter();}}} endAdornment={
+                                <InputAdornment position="end">
+                                    <IconButton disabled>
+                                        <SearchIcon fontSize="large" />
+                                    </IconButton>
+                                </InputAdornment>
+                            }
+                                   value={inputValue}
+                                   onChange={(event) => setInputValue(event.target.value)}/>
+                        </FormControl>
+                        <IconButton edge="end" aria-label="more" style={{ marginTop: "20px", color: "rgba(0, 0, 0, 0.26)" }} onClick={() => {sort();}}>
+                            {ascending ? <NorthIcon /> : <SouthIcon />}
+                        </IconButton>
+                    </div>
+
                     <div style={{display: "flex", minWidth: "600px", gap: "30px", justifyContent: "center", alignItems: "center", flexDirection: "row"}}>
                         <Demo style={{minWidth: "inherit"}}>
                             <List>
-                                {pillsList.map((pillName) => (
+                                {filteredPillsList.map((pillName) => (
                                     <div key={pillName[1]}>
                                         <ListItem >
                                             <IconButton disabled>
