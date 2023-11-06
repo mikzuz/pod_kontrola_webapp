@@ -17,8 +17,6 @@ import Input from '@mui/material/Input';
 import InputLabel from '@mui/material/InputLabel';
 import InputAdornment from '@mui/material/InputAdornment';
 import FormControl from '@mui/material/FormControl';
-import Visibility from '@mui/icons-material/Visibility';
-import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 const MainPage = () => {
 
@@ -31,7 +29,6 @@ const MainPage = () => {
             },
         },
         props: {
-            // Przekaż `uid` do motywu
             MuiButtonBase: {
                 uid: uid,
             },
@@ -40,9 +37,11 @@ const MainPage = () => {
 
     const navigate = useNavigate();
     const [patientList, setPatientList] = useState([]);
+    const [filteredPatientList, setFilteredPatientList] = useState([]);
     const [activePatient, setActivePatient] = useState(null);
     const [dialogOpen, setDialogOpen] = useState(false);
     const [patientId, setPatientId] = useState('');
+    const [inputValue, setInputValue] = useState('');
 
     useEffect(() => {
         getDataFromDatabase();
@@ -69,6 +68,7 @@ const MainPage = () => {
             .then((snapshot) => {
                 if (snapshot.exists()) {
                     setPatientList(prevList => [...prevList, [`${snapshot.val().firstName} ${snapshot.val().lastName}`, `${snapshot.val().id}`]]);
+                    setFilteredPatientList(prevList => [...prevList, [`${snapshot.val().firstName} ${snapshot.val().lastName}`, `${snapshot.val().id}`]]);
                 }
             })
             .catch((error) => {
@@ -119,12 +119,15 @@ const MainPage = () => {
         backgroundColor: theme.palette.background.paper,
     }));
 
-    const handleNotificationsClick = () => {
-        navigate(`/notifications/${uid}`);
-    };
-
     const handleDialogClose = () => {
         setDialogOpen(false);
+    };
+
+    const filter = () => {
+        const filteredList = patientList.filter((patient) =>
+            patient[0].toLowerCase().includes(inputValue.toLowerCase())
+        );
+        setFilteredPatientList(filteredList);
     };
 
     const handleDialogConfirm = () => {
@@ -162,23 +165,23 @@ const MainPage = () => {
                     <div>
                         <FormControl sx={{ m: 1, width: '25ch' }} variant="standard">
                             <InputLabel>Wyszukaj</InputLabel>
-                            <Input
-                                id="standard-adornment-password"
-                                endAdornment={
+                            <Input id="standard-adornment-password"
+                                   onKeyPress={(event) => {if (event.key === 'Enter') {filter();}}} endAdornment={
                                     <InputAdornment position="end">
                                         <IconButton disabled>
                                             <SearchIcon fontSize="large" />
                                         </IconButton>
                                     </InputAdornment>
                                 }
-                            />
+                                   value={inputValue}
+                                   onChange={(event) => setInputValue(event.target.value)}/>
                         </FormControl>
                     </div>
 
                     <div style={{display: "flex", minWidth: "600px", gap: "30px", justifyContent: "center", alignItems: "center", flexDirection: "row"}}>
                         <Demo style={{minWidth: "inherit"}}>
                             <List>
-                                {patientList.map((patientName) => (
+                                {filteredPatientList.map((patientName) => (
                                     <div key={patientName}>
                                         <ListItem >
                                             <IconButton disabled>
@@ -193,11 +196,7 @@ const MainPage = () => {
                                             </IconButton>
                                         </ListItem>
                                         <div className="options" style={{display: patientName[1] === activePatient ? 'flex' : 'none', height: "40px", justifyContent: "center", alignItems: "center"}}>
-                                            <Button
-                                                variant="outlined"
-                                                style={{ margin: "0 10px" }}
-                                                onClick={() => {showMonthlyReport(patientName[1]);}}
-                                            >
+                                            <Button variant="outlined" style={{ margin: "0 10px" }} onClick={() => {showMonthlyReport(patientName[1]);}}>
                                                 Zobacz raport
                                             </Button>
                                             <Button variant="outlined" style={{margin: "0 10px"}} onClick={() => {showPillsList(patientName[1])}}>Lista leków pacjenta</Button>
