@@ -7,6 +7,11 @@ import { useParams } from 'react-router-dom';
 import { equalTo, get, orderByChild, query, ref } from 'firebase/database';
 import { database } from './firebase-config';
 import Navbar from "./Navbar";
+<<<<<<< HEAD
+=======
+import './MyCalendar.css';
+
+>>>>>>> 65e1af8829c3cddcfa4b80bebb131ca4cfb1a97d
 
 moment.locale('pl'); // Ustawienie moment.js na język polski
 
@@ -157,10 +162,21 @@ const MyCalendar = () => {
         setCalendarEvents(newEvents);
     };
 
+<<<<<<< HEAD
+=======
+    const getFirstDayOfMonth = (selectedMonth) => {
+        const currentYear = new Date().getFullYear();
+        const selectedMonthIndex = Object.keys(months).indexOf(selectedMonth);
+        const startDate = new Date(currentYear, selectedMonthIndex, 1);
+        return startDate;
+    };
+
+>>>>>>> 65e1af8829c3cddcfa4b80bebb131ca4cfb1a97d
     return (
         <div>
         <Navbar uid={uid} />
             <div style={{ height: 500, marginTop: 20 }}>
+<<<<<<< HEAD
             <Calendar
                 localizer={localizer}
                 events={calendarEvents}
@@ -183,4 +199,31 @@ const MyCalendar = () => {
     );
 };
 
+=======
+                <Calendar
+                    localizer={localizer}
+                    events={calendarEvents}
+                    startAccessor="start"
+                    endAccessor="end"
+                    defaultView="month"
+                    defaultDate={getFirstDayOfMonth(selectedMonth)} // Ustawienie daty na pierwszy dzień wybranego miesiąca
+                    views={['month', 'week', 'day']}
+                    selectable
+                    messages={{
+                        next: 'Następny',
+                        previous: 'Poprzedni',
+                        today: 'Dziś',
+                        month: 'Miesiąc',
+                        week: 'Tydzień',
+                        day: 'Dzień',
+                    }}
+                />
+        </div>
+        </div>
+    );
+
+};
+
+
+>>>>>>> 65e1af8829c3cddcfa4b80bebb131ca4cfb1a97d
 export default MyCalendar;
