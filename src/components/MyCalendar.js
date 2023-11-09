@@ -9,7 +9,6 @@ import { database } from './firebase-config';
 import Navbar from "./Navbar";
 import './MyCalendar.css';
 
-
 moment.locale('pl'); // Ustawienie moment.js na język polski
 
 const localizer = momentLocalizer(moment);
@@ -262,7 +261,7 @@ const MyCalendar = () => {
 
     return (
         <div>
-        <Navbar uid={uid} />
+            <Navbar uid={uid} />
             <div style={{ height: 500, marginTop: 20 }}>
                 <Calendar
                     localizer={localizer}
@@ -282,11 +281,9 @@ const MyCalendar = () => {
                         day: 'Dzień',
                     }}
                 />
-        </div>
+            </div>
         </div>
     );
-
 };
-
 
 export default MyCalendar;
