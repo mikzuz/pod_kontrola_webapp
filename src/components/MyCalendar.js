@@ -21,7 +21,8 @@ const MyCalendar = () => {
     const [occurrenceCount, setOccurrenceCount] = useState({});
     const [maxDaily, setMaxDaily] = useState(0); // Inicjalizacja jako liczba
     const [pillsInfo, setPillsInfo] = useState([]);
-    const [calendarEvents, setCalendarEvents] = useState([]);
+    const [pillsStatus, setPillsStatus] = useState([]);
+    // const [calendarEvents, setCalendarEvents] = useState([]);
 
     const months = {
         'Styczeń': '01',
@@ -97,67 +98,160 @@ const MyCalendar = () => {
                 const statsById = resultsById.val() || {};
                 const combinedStats = { ...statsByPacient, ...statsById };
                 const statsArray = Object.values(combinedStats);
+                setPillsStatus(statsArray);
 
-                countOccurrences(statsArray);
+                // countOccurrences(statsArray);
             } catch (error) {
                 console.error("Błąd pobierania danych: ", error);
             }
         }
     };
 
-    const countOccurrences = (data) => {
-        const occurrenceCount = {};
-        const monthKey = months[selectedMonth];
+    console.log(pillsStatus);
 
-        data.forEach((item) => {
-            const date = item.date;
-            const pillId = item.id;
-            const entryMonth = date.split("-")[1];
+    // const countOccurrences = (data) => {
+    //     const occurrenceCount = {};
+    //     const monthKey = months[selectedMonth];
+    //
+    //     data.forEach((item) => {
+    //         const date = item.date;
+    //         const pillId = item.id;
+    //         const entryMonth = date.split("-")[1];
+    //
+    //         if (pillId === selectedPillId && entryMonth === monthKey) {
+    //             if (occurrenceCount[date]) {
+    //                 occurrenceCount[date] += 1;
+    //             } else {
+    //                 occurrenceCount[date] = 1;
+    //             }
+    //         }
+    //     });
+    //
+    //     setOccurrenceCount(occurrenceCount);
+    //     updateCalendarEvents(occurrenceCount);
+    // };
 
-            if (pillId === selectedPillId && entryMonth === monthKey) {
-                if (occurrenceCount[date]) {
-                    occurrenceCount[date] += 1;
-                } else {
-                    occurrenceCount[date] = 1;
-                }
-            }
-        });
+    // const updateCalendarEvents = (occurrenceCount) => {
+    //     const updatedEvents = Object.keys(occurrenceCount).map((date) => {
+    //         const selectedPill = pillsInfo.find((item) => item.id === selectedPillId);
+    //
+    //         if (selectedPill) {
+    //             const events = [];
+    //
+    //             for (let i = 0; i < selectedPill.time_list.length; i++) {
+    //                 const eventTime = selectedPill.time_list[i][0];
+    //                 const eventDate = new Date(date);
+    //                 eventDate.setHours(eventTime.split(":")[0]);
+    //                 eventDate.setMinutes(eventTime.split(":")[1]);
+    //
+    //                 events.push({
+    //                     title: selectedPill.name || 'Unknown',
+    //                     start: eventDate,
+    //                     end: eventDate,
+    //                     desc: `Occurrence: ${occurrenceCount[date]}`,
+    //                 });
+    //             }
+    //
+    //             return events;
+    //         }
+    //
+    //         return null;
+    //     });
+    //
+    //     const newEvents = updatedEvents.flat().filter(Boolean);
+    //     console.log(newEvents);
+    //     setCalendarEvents(newEvents);
+    // };
 
-        setOccurrenceCount(occurrenceCount);
-        updateCalendarEvents(occurrenceCount);
-    };
+    const createCalendarEvents = (pillsStatus) => {
+        const events = pillsStatus
+            .filter((item) => item.id === selectedPillId && item.status === "true" && item.date)
+            .map((item) => {
+                const dateParts = item.date?.split("-");
+                const timeParts = item.time?.split(":");
 
-    const updateCalendarEvents = (occurrenceCount) => {
-        const updatedEvents = Object.keys(occurrenceCount).map((date) => {
-            const selectedPill = pillsInfo.find((item) => item.id === selectedPillId);
+                console.log(timeParts);
 
-            if (selectedPill) {
-                const events = [];
+                if (dateParts.length === 3 && timeParts.length === 2) {
+                    const year = parseInt(dateParts[0], 10);
+                    const month = parseInt(dateParts[1], 10) - 1;
+                    const day = parseInt(dateParts[2], 10);
+                    const hour = parseInt(timeParts[0], 10);
+                    const minute = parseInt(timeParts[1], 10);
 
-                for (let i = 0; i < selectedPill.time_list.length; i++) {
-                    const eventTime = selectedPill.time_list[i][0];
-                    const eventDate = new Date(date);
-                    eventDate.setHours(eventTime.split(":")[0]);
-                    eventDate.setMinutes(eventTime.split(":")[1]);
+                    const eventDate = new Date(year, month, day, hour, minute);
+                    const matchingPillInfo = pillsInfo.find((info) => info.id.toString() === item.id.toString());
 
-                    events.push({
-                        title: selectedPill.name || 'Unknown',
+                    console.log("matchingPillInfo:", matchingPillInfo);
+                    console.log("eventDate:", eventDate);
+
+                    // const eventName = `${item.time} ${matchingPillInfo ? matchingPillInfo.name : 'Unknown'}`;
+
+
+                    return {
+                        title: matchingPillInfo ? matchingPillInfo.name : 'Unknown',
                         start: eventDate,
                         end: eventDate,
-                        desc: `Occurrence: ${occurrenceCount[date]}`,
-                    });
+                    };
                 }
 
-                return events;
-            }
+                return null;
+            })
+            .filter((event) => event !== null);
 
-            return null;
-        });
-
-        const newEvents = updatedEvents.flat().filter(Boolean);
-        console.log(newEvents);
-        setCalendarEvents(newEvents);
+        return events;
     };
+
+    const calculateFrequency = () => {
+        if (!selectedPillId || !pillsInfo.length) {
+            return 0;
+        }
+
+        const selectedPill = pillsInfo.find((item) => item.id === selectedPillId);
+
+        if (!selectedPill || !selectedPill.date_last || !selectedPill.date_next) {
+            return 0;
+        }
+
+        const dateLast = moment(selectedPill.date_last, 'YYYY-MM-DD');
+        const dateNext = moment(selectedPill.date_next, 'YYYY-MM-DD');
+
+        // Sprawdź, czy date_last i date_next są takie same
+        if (dateLast.isSame(dateNext, 'day')) {
+            return 1;
+        }
+
+        const daysDifference = dateNext.diff(dateLast, 'days');
+        const frequency = 1 / daysDifference;
+
+        return frequency;
+    };
+
+// Użycie funkcji
+    useEffect(() => {
+        const frequency = calculateFrequency();
+        console.log('Frequency:', frequency);
+    }, [selectedPillId, pillsInfo]);
+
+
+
+
+
+
+    const [calendarEvents, setCalendarEvents] = useState([]);
+
+    useEffect(() => {
+        if (pillsStatus.length > 0 && pillsInfo.length > 0) {
+            const events = createCalendarEvents(pillsStatus);
+            console.log("events");
+            console.log(events);
+            setCalendarEvents(events);
+        }
+    }, [pillsStatus, pillsInfo]);
+
+
+
+
 
     const getFirstDayOfMonth = (selectedMonth) => {
         const currentYear = new Date().getFullYear();
