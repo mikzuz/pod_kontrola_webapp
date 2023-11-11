@@ -12,7 +12,9 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import dayjs from 'dayjs';
 import styled from 'styled-components';
 import "./AddPill.css";
-import {Button, ButtonGroup} from "@mui/material";
+import {Button, ButtonGroup, IconButton} from "@mui/material";
+import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
+import SearchIcon from "@mui/icons-material/Search";
 
 // npm install @mui/x-date-pickers
 // npm install styled-components
@@ -29,29 +31,24 @@ const AddPill = () => {
       margin-bottom: 0.5em !important;
       `;
 
+    const defaultTime = dayjs('2022-04-17T15:30');
     const navigate = useNavigate();
     const { uid } = useParams();
     let { patientId } = useParams();
     const [name, setName] = useState("");
-    const [time1, setTime1] = useState(dayjs('2022-04-17T15:30'));
-    const [time2, setTime2] = useState(dayjs('2022-04-17T15:30'));
-    const [time3, setTime3] = useState(dayjs('2022-04-17T15:30'));
-    const [time, setTime] = useState([time1, time2, time3]);
+    const [time, setTime] = useState([defaultTime, defaultTime, defaultTime]);
     const [frequency, setFrequency] = useState("");
     const [amountLeft, setAmountLeft] = useState("");
     const [timesToShow, setTimesToShow] = useState(1);
-    const [timesToShowMonday, setTimesToShowMonday] = useState(0);
-    const [timesToShowTuesday, setTimesToShowTuesday] = useState(0);
-    const [timesToShowWednesday, setTimesToShowWednesday] = useState(0);
-    const [timesToShowThursday, setTimesToShowThursday] = useState(0);
-    const [timesToShowFriday, setTimesToShowFriday] = useState(0);
-    const [timesToShowSaturday, setTimesToShowSaturday] = useState(0);
-    const [timesToShowSunday, setTimesToShowSunday] = useState(0);
     const [chooseHours, setChooseHours] = useState("Wybierz godziny przypomnień");
-
-    useEffect(() => {
-        setTime([time1, time2, time3]);
-    }, [time1, time2, time3]);
+    const [timeMonday, setTimeMonday] = useState([]);
+    const [timeTuesday, setTimeTuesday] = useState([]);
+    const [timeWednesday, setTimeWednesday] = useState([]);
+    const [timeThursday, setTimeThursday] = useState([]);
+    const [timeFriday, setTimeFriday] = useState([]);
+    const [timeSaturday, setTimeSaturday] = useState([]);
+    const [timeSunday, setTimeSunday] = useState([]);
+    const [customTime, setCustomTime] = useState(false);
 
     const handleAdd = () => {
         if(name === '') {
@@ -145,6 +142,7 @@ const AddPill = () => {
                 cleanBoard()
                 break
             case 'Niestandardowe':
+                setCustomTime(true)
                 setTimesToShow(0);
                 setChooseHours("Dodaj godziny przypomnień w wybrane dni")
                 break;
@@ -157,52 +155,210 @@ const AddPill = () => {
 
     const cleanBoard = () => {
         setChooseHours("Wybierz godziny przypomnień")
-        setTimesToShowMonday(0)
+        setCustomTime(false)
     };
 
     const handleTimeChange = (newTime, index) => {
+        const newTimes = [...time];
         if (index === 0) {
-            setTime1(newTime)
+            newTimes[0] = newTime
         } else if (index === 1) {
-            setTime2(newTime)
+            newTimes[1] = newTime
         } else if (index === 2) {
-            setTime3(newTime)
+            newTimes[2] = newTime
         }
+        setTime(newTimes);
+    };
+
+    const handleTimeChangeMonday = (newTime, index) => {
+        const newTimes = [...timeMonday];
+        if (index === 0) {
+            newTimes[0] = newTime
+        } else if (index === 1) {
+            newTimes[1] = newTime
+        } else if (index === 2) {
+            newTimes[2] = newTime
+        }
+        setTimeMonday(newTimes);
+    };
+
+    const handleTimeChangeTuesday = (newTime, index) => {
+        const newTimes = [...timeTuesday];
+        if (index === 0) {
+            newTimes[0] = newTime
+        } else if (index === 1) {
+            newTimes[1] = newTime
+        } else if (index === 2) {
+            newTimes[2] = newTime
+        }
+        setTimeTuesday(newTimes);
+    };
+
+    const handleTimeChangeWednesday = (newTime, index) => {
+        const newTimes = [...timeWednesday];
+        if (index === 0) {
+            newTimes[0] = newTime
+        } else if (index === 1) {
+            newTimes[1] = newTime
+        } else if (index === 2) {
+            newTimes[2] = newTime
+        }
+        setTimeWednesday(newTimes);
+    };
+
+    const handleTimeChangeThursday = (newTime, index) => {
+        const newTimes = [...timeThursday];
+        if (index === 0) {
+            newTimes[0] = newTime
+        } else if (index === 1) {
+            newTimes[1] = newTime
+        } else if (index === 2) {
+            newTimes[2] = newTime
+        }
+        setTimeThursday(newTimes);
+    };
+
+    const handleTimeChangeFriday = (newTime, index) => {
+        const newTimes = [...timeFriday];
+        if (index === 0) {
+            newTimes[0] = newTime
+        } else if (index === 1) {
+            newTimes[1] = newTime
+        } else if (index === 2) {
+            newTimes[2] = newTime
+        }
+        setTimeFriday(newTimes);
+    };
+
+    const handleTimeChangeSaturday = (newTime, index) => {
+        const newTimes = [...timeSaturday];
+        if (index === 0) {
+            newTimes[0] = newTime
+        } else if (index === 1) {
+            newTimes[1] = newTime
+        } else if (index === 2) {
+            newTimes[2] = newTime
+        }
+        setTimeSaturday(newTimes);
+    };
+
+    const handleTimeChangeSunday = (newTime, index) => {
+        const newTimes = [...timeSunday];
+        if (index === 0) {
+            newTimes[0] = newTime
+        } else if (index === 1) {
+            newTimes[1] = newTime
+        } else if (index === 2) {
+            newTimes[2] = newTime
+        }
+        setTimeSunday(newTimes);
+    };
+
+    const checkIfOk = (timesADay) => {
+        if (timesADay <= 3) {
+            return true
+        } else {
+            toast.info("Maksymalna dzienna ilość przypomnień wynosi 3");
+            return false;
+        }
+
     };
 
     const addMonday = () => {
-        let monday = timesToShowMonday
-        setTimesToShowMonday(monday + 1)
+        const newTimes = [...timeMonday];
+        if (checkIfOk(timeMonday.length + 1)) {
+            newTimes[newTimes.length] = defaultTime;
+            setTimeMonday(newTimes)
+        }
     };
 
     const addTuesday = () => {
-        let tuesday = timesToShowTuesday
-        setTimesToShowTuesday(tuesday + 1)
+        const newTimes = [...timeTuesday];
+        if (checkIfOk(timeTuesday.length + 1)) {
+            newTimes[newTimes.length] = defaultTime;
+            setTimeTuesday(newTimes)
+        }
     };
 
     const addWednesday = () => {
-        let wednesday = timesToShowWednesday
-        setTimesToShowWednesday(wednesday + 1)
+        const newTimes = [...timeWednesday];
+        if (checkIfOk(timeWednesday.length + 1)) {
+            newTimes[newTimes.length] = defaultTime;
+            setTimeWednesday(newTimes)
+        }
     };
 
     const addThursday = () => {
-        let thursday = timesToShowThursday
-        setTimesToShowThursday(thursday + 1)
+        const newTimes = [...timeThursday];
+        if (checkIfOk(timeThursday.length + 1)) {
+            newTimes[newTimes.length] = defaultTime;
+            setTimeThursday(newTimes)
+        }
     };
 
     const addFriday = () => {
-        let friday = timesToShowFriday
-        setTimesToShowFriday(friday + 1)
+        const newTimes = [...timeFriday];
+        if (checkIfOk(timeFriday.length + 1)) {
+            newTimes[newTimes.length] = defaultTime;
+            setTimeFriday(newTimes)
+        }
     };
 
     const addSaturday = () => {
-        let saturday = timesToShowSaturday
-        setTimesToShowSaturday(saturday + 1)
+        const newTimes = [...timeSaturday];
+        if (checkIfOk(timeSaturday.length + 1)) {
+            newTimes[newTimes.length] = defaultTime;
+            setTimeSaturday(newTimes)
+        }
     };
 
     const addSunday = () => {
-        let sunday = timesToShowSunday
-        setTimesToShowSunday(sunday + 1)
+        const newTimes = [...timeSunday];
+        if (checkIfOk(timeSunday.length + 1)) {
+            newTimes[newTimes.length] = defaultTime;
+            setTimeSunday(newTimes)
+        }
+    };
+
+    const removeTime = (day, indexToRemove) => {
+        switch (day) {
+            case 'monday':
+                setTimeMonday((prevTimeMonday) =>
+                    prevTimeMonday.filter((_, index) => index !== indexToRemove)
+                );
+                break;
+            case 'tuesday':
+                setTimeTuesday((prevTimeTuesday) =>
+                    prevTimeTuesday.filter((_, index) => index !== indexToRemove)
+                );
+                break
+            case 'wednesday':
+                setTimeWednesday((prevTimeWednesday) =>
+                    prevTimeWednesday.filter((_, index) => index !== indexToRemove)
+                );
+                break;
+            case 'thursday':
+                setTimeThursday((prevTimeThursday) =>
+                    prevTimeThursday.filter((_, index) => index !== indexToRemove)
+                );
+                break;
+            case 'friday':
+                setTimeFriday((prevTimeFriday) =>
+                    prevTimeFriday.filter((_, index) => index !== indexToRemove)
+                );
+                break;
+            case 'saturday':
+                setTimeSaturday((prevTimeSaturday) =>
+                    prevTimeSaturday.filter((_, index) => index !== indexToRemove)
+                );
+                break;
+            default:
+                setTimeSunday((prevTimeSunday) =>
+                    prevTimeSunday.filter((_, index) => index !== indexToRemove)
+                );
+                break;
+        }
+
     };
 
     return (
@@ -241,105 +397,149 @@ const AddPill = () => {
                                 />
                             ))}
                         </LocalizationProvider>
-                        <ButtonGroup variant="text" aria-label="text button group" style={{ display: timesToShow === 0 ? 'block' : 'none', marginBottom: '10px' }}>
-                            <Button onClick={addMonday} style={{ color: 'black' }}>Pon</Button>
-                            <Button onClick={addTuesday} style={{ color: 'black' }}>Wt</Button>
-                            <Button onClick={addWednesday} style={{ color: 'black' }}>Śr</Button>
-                            <Button onClick={addThursday} style={{ color: 'black' }}>Czw</Button>
-                            <Button onClick={addFriday} style={{ color: 'black' }}>Pt</Button>
-                            <Button onClick={addSaturday} style={{ color: 'black' }}>Sob</Button>
-                            <Button onClick={addSunday} style={{ color: 'black' }}>Nd</Button>
-                        </ButtonGroup>
-                        <div className="monday" style={{ display: timesToShowMonday > 0 ? 'block' : 'none'}}>
-                            <label>Poniedziałek</label>
-                            <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                {[...Array(timesToShowMonday)].map((_, index) => (
-                                    <StyledMobileTimePicker
-                                        key={index}
-                                        ampm={false}
-                                        onAccept={(newTime) => handleTimeChange(newTime, index)}
-                                        value={time[index]}
-                                    />
-                                ))}
-                            </LocalizationProvider>
-                        </div>
-                        <div className="tuesday" style={{ display: timesToShowTuesday > 0 ? 'block' : 'none'}}>
-                            <label>Wtorek</label>
-                            <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                {[...Array(timesToShowTuesday)].map((_, index) => (
-                                    <StyledMobileTimePicker
-                                        key={index}
-                                        ampm={false}
-                                        onAccept={(newTime) => handleTimeChange(newTime, index)}
-                                        value={time[index]}
-                                    />
-                                ))}
-                            </LocalizationProvider>
-                        </div>
-                        <div className="wednesday" style={{ display: timesToShowWednesday > 0 ? 'block' : 'none'}}>
-                            <label>Środa</label>
-                            <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                {[...Array(timesToShowWednesday)].map((_, index) => (
-                                    <StyledMobileTimePicker
-                                        key={index}
-                                        ampm={false}
-                                        onAccept={(newTime) => handleTimeChange(newTime, index)}
-                                        value={time[index]}
-                                    />
-                                ))}
-                            </LocalizationProvider>
-                        </div>
-                        <div className="thursday" style={{ display: timesToShowThursday > 0 ? 'block' : 'none'}}>
-                            <label>Czwartek</label>
-                            <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                {[...Array(timesToShowThursday)].map((_, index) => (
-                                    <StyledMobileTimePicker
-                                        key={index}
-                                        ampm={false}
-                                        onAccept={(newTime) => handleTimeChange(newTime, index)}
-                                        value={time[index]}
-                                    />
-                                ))}
-                            </LocalizationProvider>
-                        </div>
-                        <div className="friday" style={{ display: timesToShowFriday > 0 ? 'block' : 'none'}}>
-                            <label>Piątek</label>
-                            <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                {[...Array(timesToShowFriday)].map((_, index) => (
-                                    <StyledMobileTimePicker
-                                        key={index}
-                                        ampm={false}
-                                        onAccept={(newTime) => handleTimeChange(newTime, index)}
-                                        value={time[index]}
-                                    />
-                                ))}
-                            </LocalizationProvider>
-                        </div>
-                        <div className="saturday" style={{ display: timesToShowSaturday > 0 ? 'block' : 'none'}}>
-                            <label>Sobota</label>
-                            <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                {[...Array(timesToShowSaturday)].map((_, index) => (
-                                    <StyledMobileTimePicker
-                                        key={index}
-                                        ampm={false}
-                                        onAccept={(newTime) => handleTimeChange(newTime, index)}
-                                        value={time[index]}
-                                    />
-                                ))}
-                            </LocalizationProvider>
-                        </div>
-                        <div className="sunday" style={{ display: timesToShowSunday > 0 ? 'block' : 'none'}}>
-                            <label>Niedziela</label>
-                            <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                {[...Array(timesToShowSunday)].map((_, index) => (
-                                    <StyledMobileTimePicker
-                                        key={index}
-                                        ampm={false}
-                                        onAccept={(newTime) => handleTimeChange(newTime, index)}
-                                        value={time[index]}
-                                    />
-                                ))}
-                            </LocalizationProvider>
+                        <div className="custom" style={{ display: customTime ? 'block' : 'none'}}>
+                            <ButtonGroup variant="text" aria-label="text button group" style={{ display: timesToShow === 0 ? 'block' : 'none', marginBottom: '10px' }}>
+                                <Button onClick={addMonday} style={{ color: 'black' }}>Pon</Button>
+                                <Button onClick={addTuesday} style={{ color: 'black' }}>Wt</Button>
+                                <Button onClick={addWednesday} style={{ color: 'black' }}>Śr</Button>
+                                <Button onClick={addThursday} style={{ color: 'black' }}>Czw</Button>
+                                <Button onClick={addFriday} style={{ color: 'black' }}>Pt</Button>
+                                <Button onClick={addSaturday} style={{ color: 'black' }}>Sob</Button>
+                                <Button onClick={addSunday} style={{ color: 'black' }}>Nd</Button>
+                            </ButtonGroup>
+                            <div className="monday" style={{ display: timeMonday.length > 0 ? 'block' : 'none'}}>
+                                <label>Poniedziałek</label>
+                                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                    {timeMonday.map((_, index) => (
+                                        <div style={{ display: 'inline-flex'}}>
+                                            <StyledMobileTimePicker
+                                                key={index}
+                                                ampm={false}
+                                                onAccept={(newTime) => handleTimeChangeMonday(newTime, index)}
+                                                value={timeMonday[index]}
+                                                style={{width: '280px'}}
+                                            />
+                                            <IconButton onClick={() => removeTime("monday", index)} style={{ color: 'white', width: '40px', height: '40px' }}>
+                                                <RemoveCircleOutlineIcon fontSize="small" />
+                                            </IconButton>
+                                        </div>
+                                    ))}
+                                </LocalizationProvider>
+                            </div>
+                            <div className="tuesday" style={{ display: timeTuesday.length > 0 ? 'block' : 'none'}}>
+                                <label>Wtorek</label>
+                                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                    {timeTuesday.map((_, index) => (
+                                        <div style={{ display: 'inline-flex'}}>
+                                            <StyledMobileTimePicker
+                                                key={index}
+                                                ampm={false}
+                                                onAccept={(newTime) => handleTimeChangeTuesday(newTime, index)}
+                                                value={timeTuesday[index]}
+                                                style={{width: '280px'}}
+                                            />
+                                            <IconButton onClick={() => removeTime("tuesday", index)} style={{ color: 'white', width: '40px', height: '40px' }}>
+                                                <RemoveCircleOutlineIcon fontSize="small" />
+                                            </IconButton>
+                                        </div>
+                                    ))}
+                                </LocalizationProvider>
+                            </div>
+                            <div className="wednesday" style={{ display: timeWednesday.length > 0 ? 'block' : 'none'}}>
+                                <label>Środa</label>
+                                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                    {timeWednesday.map((_, index) => (
+                                        <div style={{ display: 'inline-flex'}}>
+                                            <StyledMobileTimePicker
+                                                key={index}
+                                                ampm={false}
+                                                onAccept={(newTime) => handleTimeChangeWednesday(newTime, index)}
+                                                value={timeWednesday[index]}
+                                                style={{width: '280px'}}
+                                            />
+                                            <IconButton onClick={() => removeTime("wednesday", index)} style={{ color: 'white', width: '40px', height: '40px' }}>
+                                                <RemoveCircleOutlineIcon fontSize="small" />
+                                            </IconButton>
+                                        </div>
+                                    ))}
+                                </LocalizationProvider>
+                            </div>
+                            <div className="thursday" style={{ display: timeThursday.length > 0 ? 'block' : 'none'}}>
+                                <label>Czwartek</label>
+                                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                    {timeThursday.map((_, index) => (
+                                        <div style={{ display: 'inline-flex'}}>
+                                            <StyledMobileTimePicker
+                                                key={index}
+                                                ampm={false}
+                                                onAccept={(newTime) => handleTimeChangeThursday(newTime, index)}
+                                                value={timeThursday[index]}
+                                                style={{width: '280px'}}
+                                            />
+                                            <IconButton onClick={() => removeTime("thursday", index)} style={{ color: 'white', width: '40px', height: '40px' }}>
+                                                <RemoveCircleOutlineIcon fontSize="small" />
+                                            </IconButton>
+                                        </div>
+                                    ))}
+                                </LocalizationProvider>
+                            </div>
+                            <div className="friday" style={{ display: timeFriday.length > 0 ? 'block' : 'none'}}>
+                                <label>Piątek</label>
+                                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                    {timeFriday.map((_, index) => (
+                                        <div style={{ display: 'inline-flex'}}>
+                                            <StyledMobileTimePicker
+                                                key={index}
+                                                ampm={false}
+                                                onAccept={(newTime) => handleTimeChangeFriday(newTime, index)}
+                                                value={timeFriday[index]}
+                                                style={{width: '280px'}}
+                                            />
+                                            <IconButton onClick={() => removeTime("friday", index)} style={{ color: 'white', width: '40px', height: '40px' }}>
+                                                <RemoveCircleOutlineIcon fontSize="small" />
+                                            </IconButton>
+                                        </div>
+                                    ))}
+                                </LocalizationProvider>
+                            </div>
+                            <div className="saturday" style={{ display: timeSaturday.length > 0 ? 'block' : 'none'}}>
+                                <label>Sobota</label>
+                                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                    {timeSaturday.map((_, index) => (
+                                        <div style={{ display: 'inline-flex'}}>
+                                            <StyledMobileTimePicker
+                                                key={index}
+                                                ampm={false}
+                                                onAccept={(newTime) => handleTimeChangeSaturday(newTime, index)}
+                                                value={timeSaturday[index]}
+                                                style={{width: '280px'}}
+                                            />
+                                            <IconButton onClick={() => removeTime("saturday", index)} style={{ color: 'white', width: '40px', height: '40px' }}>
+                                                <RemoveCircleOutlineIcon fontSize="small" />
+                                            </IconButton>
+                                        </div>
+                                    ))}
+                                </LocalizationProvider>
+                            </div>
+                            <div className="sunday" style={{ display: timeSunday.length > 0 ? 'block' : 'none'}}>
+                                <label>Niedziela</label>
+                                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                    {timeSunday.map((_, index) => (
+                                        <div style={{ display: 'inline-flex'}}>
+                                            <StyledMobileTimePicker
+                                                key={index}
+                                                ampm={false}
+                                                onAccept={(newTime) => handleTimeChangeSunday(newTime, index)}
+                                                value={timeSunday[index]}
+                                                style={{width: '280px'}}
+                                            />
+                                            <IconButton onClick={() => removeTime("sunday", index)} style={{ color: 'white', width: '40px', height: '40px' }}>
+                                                <RemoveCircleOutlineIcon fontSize="small" />
+                                            </IconButton>
+                                        </div>
+                                    ))}
+                                </LocalizationProvider>
+                            </div>
                         </div>
                         <div className="form-group mt-3">
                             <input

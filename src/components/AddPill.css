@@ -18,3 +18,9 @@
     margin-bottom: 8rem;
     margin-top: 8rem;
 }
+
+.custom {
+    .css-z3c6am-MuiFormControl-root-MuiTextField-root {
+        width: 280px !important;
+    }
+}
