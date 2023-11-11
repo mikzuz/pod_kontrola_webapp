@@ -201,7 +201,6 @@ const EditPill = () => {
         <div>
             <Navbar uid={uid} />
             <div className="Auth-form-container" style={{flexDirection: 'column'}}>
-                <div id="background1"></div>
                 <form className="Auth-form">
                     <div className="Auth-form-content">
                         <h3 className="Auth-form-title">Edytuj lek</h3>
@@ -261,7 +260,6 @@ const EditPill = () => {
                         </div>
                     </div>
                 </form>
-                <div id="background2"></div>
             </div>
         </div>
     );

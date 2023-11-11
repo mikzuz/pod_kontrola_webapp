@@ -5,3 +5,16 @@
 .form-group {
     margin-top: unset !important;
 }
+
+.css-iv8nej-MuiButtonGroup-root .MuiButtonGroup-grouped {
+    min-width: 43px !important;
+}
+
+.Auth-form-container {
+    height: unset;
+}
+
+.Auth-form {
+    margin-bottom: 8rem;
+    margin-top: 8rem;
+}
