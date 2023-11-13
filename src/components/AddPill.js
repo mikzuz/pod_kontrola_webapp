@@ -14,7 +14,6 @@ import styled from 'styled-components';
 import "./AddPill.css";
 import {Button, ButtonGroup, IconButton} from "@mui/material";
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
-import SearchIcon from "@mui/icons-material/Search";
 
 // npm install @mui/x-date-pickers
 // npm install styled-components
@@ -31,6 +30,7 @@ const AddPill = () => {
       margin-bottom: 0.5em !important;
       `;
 
+    const daysOfWeek = ['Niedziela', 'Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek', 'Sobota'];
     const defaultTime = dayjs('2022-04-17T15:30');
     const navigate = useNavigate();
     const { uid } = useParams();
@@ -78,29 +78,85 @@ const AddPill = () => {
             case 'Co drugi dzień':
                 date_next = dayjs().add(2, 'day').format('YYYY-MM-DD');
                 break;
+            case 'Niestandardowa':
+                const daysByUser = checkDaysOfWeek();
+                const currentDayName = getWeekday();
+                let currentDayIndex = -1;
+                let nextDayIndex = -1;
+                for(let i = 0; i < daysOfWeek.length; i++) {
+                    if (daysOfWeek[i] === currentDayName) {
+                        currentDayIndex = i
+                    }
+                }
+                for(let i = currentDayIndex + 1; i < daysByUser.length; i++) {
+                    if (daysByUser[i] !== 'null') {
+                        nextDayIndex = i
+                    }
+                }
+                if (nextDayIndex === -1) {
+                    for(let i = 0; i < currentDayIndex; i++) {
+                        if (daysByUser[i] !== 'null') {
+                            nextDayIndex = i
+                        }
+                    }
+                }
+                console.log('Next day: ', daysOfWeek[nextDayIndex])
+                console.log('date', getNextDate(nextDayIndex));
+                date_next = dayjs(getNextDate(nextDayIndex)).format('YYYY-MM-DD');
+                console.log(date_next)
+                break;
             default:
                 date_next = date;
                 break;
         }
 
-        try {
-            await set(ref(database, 'Pills/' + id), {
-                name: name,
-                id: id,
-                inBox: amountLeft,
-                availability: amountLeft,
-                date_last: date,
-                date_next: date_next,
-                frequency: frequency,
-                time_list: times,
-                pacient: patientId,
-            })
-            toast.success("Dodano lek"); //nwm czemu nie widać
-            navigate(`/pillsList/${uid}/${patientId}`);
-        } catch (error) {
-            toast.error(error.message);
-        }
+        // try {
+        //     await set(ref(database, 'Pills/' + id), {
+        //         name: name,
+        //         id: id,
+        //         inBox: amountLeft,
+        //         availability: amountLeft,
+        //         date_last: date,
+        //         date_next: date_next,
+        //         frequency: frequency,
+        //         time_list: times,
+        //         pacient: patientId,
+        //     })
+        //     toast.success("Dodano lek"); //nwm czemu nie widać
+        //     navigate(`/pillsList/${uid}/${patientId}`);
+        // } catch (error) {
+        //     toast.error(error.message);
+        // }
     };
+
+    const getWeekday = () => {
+        var currentDate = new Date();
+        var weekday = currentDate.getDay();
+        var dayName = daysOfWeek[weekday];
+
+        console.log('Dziś jest ' + dayName);
+        return dayName;
+    }
+
+    const checkDaysOfWeek = () => {
+        var daysOfWeek = [];
+        timeSunday.length > 0 ? daysOfWeek.push("Niedziela") : daysOfWeek.push("null");
+        timeMonday.length > 0 ? daysOfWeek.push("Poniedziałek") : daysOfWeek.push("null");
+        timeTuesday.length > 0 ? daysOfWeek.push("Wtorek") : daysOfWeek.push("null");
+        timeWednesday.length > 0 ? daysOfWeek.push("Środa") : daysOfWeek.push("null");
+        timeThursday.length > 0 ? daysOfWeek.push("Czwartek") : daysOfWeek.push("null");
+        timeFriday.length > 0 ? daysOfWeek.push("Piątek") : daysOfWeek.push("null");
+        timeSaturday.length > 0 ? daysOfWeek.push("Sobota") : daysOfWeek.push("null");
+        return daysOfWeek;
+    }
+
+    const getNextDate = (targetDay) => {
+        var today = new Date();
+        var currentDayOfWeek = today.getDay();
+        var daysUntilTarget = (targetDay - currentDayOfWeek + 7) % 7;
+        today.setDate(today.getDate() + daysUntilTarget);
+        return today;
+    }
 
     const getPillFromDatabase = async () => {
         const pillsRef = ref(database, 'Pills');
@@ -141,7 +197,7 @@ const AddPill = () => {
                 setTimesToShow(3);
                 cleanBoard()
                 break
-            case 'Niestandardowe':
+            case 'Niestandardowa':
                 setCustomTime(true)
                 setTimesToShow(0);
                 setChooseHours("Dodaj godziny przypomnień w wybrane dni")
@@ -384,7 +440,7 @@ const AddPill = () => {
                             <option>Trzy razy dziennie</option>
                             <option>Co drugi dzień</option>
                             <option>Raz w tygodniu</option>
-                            <option>Niestandardowe</option>
+                            <option>Niestandardowa</option>
                         </select>
                         <label style={{ marginTop: '0.5em' }}>{chooseHours}</label>
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
