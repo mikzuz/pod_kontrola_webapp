@@ -100,41 +100,64 @@ const AddPill = () => {
                         }
                     }
                 }
-                console.log('Next day: ', daysOfWeek[nextDayIndex])
-                console.log('date', getNextDate(nextDayIndex));
                 date_next = dayjs(getNextDate(nextDayIndex)).format('YYYY-MM-DD');
-                console.log(date_next)
                 break;
             default:
                 date_next = date;
                 break;
         }
 
-        // try {
-        //     await set(ref(database, 'Pills/' + id), {
-        //         name: name,
-        //         id: id,
-        //         inBox: amountLeft,
-        //         availability: amountLeft,
-        //         date_last: date,
-        //         date_next: date_next,
-        //         frequency: frequency,
-        //         time_list: times,
-        //         pacient: patientId,
-        //     })
-        //     toast.success("Dodano lek"); //nwm czemu nie widać
-        //     navigate(`/pillsList/${uid}/${patientId}`);
-        // } catch (error) {
-        //     toast.error(error.message);
-        // }
+        try {
+            if (frequency === 'Niestandardowa') {
+                let timeList = [getTimeTableForDays(timeSunday), getTimeTableForDays(timeMonday), getTimeTableForDays(timeTuesday), getTimeTableForDays(timeWednesday), getTimeTableForDays(timeThursday), getTimeTableForDays(timeFriday), getTimeTableForDays(timeSaturday)];
+                const customTimeList = [];
+                daysOfWeek.forEach((day, index) => {
+                    if (timeList[index].length > 0) {
+                        const dayObject = {
+                            day: day,
+                            times: [],
+                        };
+
+                        dayObject.times = timeList[index];
+                        customTimeList.push(dayObject);
+                    }
+                });
+
+                await set(ref(database, 'Pills/' + id), {
+                    name: name,
+                    id: id,
+                    inBox: amountLeft,
+                    availability: amountLeft,
+                    date_last: date,
+                    date_next: date_next,
+                    frequency: frequency,
+                    time_list: customTimeList,
+                    pacient: patientId,
+                })
+            } else {
+                await set(ref(database, 'Pills/' + id), {
+                    name: name,
+                    id: id,
+                    inBox: amountLeft,
+                    availability: amountLeft,
+                    date_last: date,
+                    date_next: date_next,
+                    frequency: frequency,
+                    time_list: times,
+                    pacient: patientId,
+                })
+            }
+            toast.success("Dodano lek"); //nwm czemu nie widać
+            navigate(`/pillsList/${uid}/${patientId}`);
+        } catch (error) {
+            toast.error(error.message);
+        }
     };
 
     const getWeekday = () => {
         var currentDate = new Date();
         var weekday = currentDate.getDay();
         var dayName = daysOfWeek[weekday];
-
-        console.log('Dziś jest ' + dayName);
         return dayName;
     }
 
@@ -181,6 +204,12 @@ const AddPill = () => {
     const getTimeTable = () => {
         return [...Array(timesToShow)].map((_, index) => (
             [time[index].format('HH:mm'), false]
+        ));
+    };
+
+    const getTimeTableForDays = (day) => {
+        return day.map((_, index) => (
+            [day[index].format('HH:mm'), false]
         ));
     };
 
