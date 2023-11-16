@@ -147,7 +147,7 @@ const AddPill = () => {
                     pacient: patientId,
                 })
             }
-            toast.success("Dodano lek"); //nwm czemu nie widać
+            toast.success("Dodano lek");
             navigate(`/pillsList/${uid}/${patientId}`);
         } catch (error) {
             toast.error(error.message);

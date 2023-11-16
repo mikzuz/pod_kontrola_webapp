@@ -12,6 +12,7 @@ import Notifications from './Notifications';
 import MyCalendar from "./components/MyCalendar";
 import AddPill from "./components/AddPill";
 import EditPill from "./components/EditPill";
+import {ToastContainer} from "react-toastify";
 
 const App = () => {
 
@@ -30,6 +31,7 @@ const App = () => {
                     <Route path="/addPill/:uid/:patientId" element={<AddPill />} />
                     <Route path="/editPill/:uid/:patientId/:selectedPillId" element={<EditPill/>} />
                 </Routes>
+                <ToastContainer position="top-right"></ToastContainer>
             </div>
         </Router>
     );

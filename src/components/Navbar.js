@@ -61,7 +61,6 @@ const Navbar = ({ uid }) => {
                         </Toolbar>
                     </CustomAppBar>
                 </div>
-                <ToastContainer position="top-right"></ToastContainer>
             </div>
         );
 }

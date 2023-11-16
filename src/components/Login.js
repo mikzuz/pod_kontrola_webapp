@@ -119,7 +119,7 @@ export default function Auth(props) {
         return (
             <>
                 {/*<MainNavbar />*/}
-                <div className="Auth-form-container">
+                <div className="Auth-form-container" style={{ height: '100vh' }}>
                     <div id="background1"></div>
                     <form className="Auth-form">
                         <div className="Auth-form-content">

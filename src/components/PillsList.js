@@ -53,6 +53,9 @@ const PillsList = () => {
         const queryRef = query(pillsRef, orderByChild("pacient"), equalTo(patientId));
 
         onValue(queryRef, (snapshot) => {
+            setPillsList([]);
+            setFilteredPillsList([]);
+
             snapshot.forEach((childSnapshot) => {
                 const pillName = childSnapshot.child("name").val();
                 const pillId = childSnapshot.child("id").val();
