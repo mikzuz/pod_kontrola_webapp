@@ -48,8 +48,10 @@ const MyCalendar = () => {
     const [occurrenceCount, setOccurrenceCount] = useState({});
     const [maxDaily, setMaxDaily] = useState(0); // Inicjalizacja jako liczba
     const [pillsInfo, setPillsInfo] = useState([]);
-    const [pillsStatus, setPillsStatus] = useState([]);
+    // const [pillsStatus, setPillsStatus] = useState([]);
+    let pillsStatus = useState([]);
     const [frequency, setFrequency] = useState(0);
+
 
     const months = {
         'Styczeń': '01',
@@ -134,21 +136,31 @@ const MyCalendar = () => {
                 const statsByPacient = resultsByPacient.val() || {};
                 const statsById = resultsById.val() || {};
                 const combinedStats = { ...statsByPacient, ...statsById };
-                const statsArray = Object.values(combinedStats);
-                setPillsStatus(statsArray);
-
-                // countOccurrences(statsArray);
+                pillsStatus = Object.values(combinedStats);
+                // const statsArray = Object.values(combinedStats);
+                //
+                // setPillsStatus(statsArray);
+                console.log("update");
+                console.log(pillsStatus);
+                if(pillsInfo.length >0){
+                    updateCalendarEvents();
+                }
             } catch (error) {
                 console.error("Błąd pobierania danych: ", error);
             }
         }
     };
 
+
     console.log(pillsStatus);
 
     const createCalendarEvents = (pillsStatus) => {
 
         console.log("tuuuu");
+        console.log("nott emptyyy");
+        let events = []; // Declare events array outside the conditional block
+
+
 
 
         const selectedPill = pillsInfo.find((info) => info.id === selectedPillId);
@@ -165,7 +177,7 @@ const MyCalendar = () => {
                     daysDifference = 1;
                 }
 
-                const events = pillsStatus
+                events = pillsStatus
                     .filter((item) => item.id === selectedPillId && item.status === "true" && item.date)
                     .map((item) => {
                         const dateParts = item.date?.split("-");
@@ -232,7 +244,6 @@ const MyCalendar = () => {
                             for (let j = 1; j < 360; j++) {
                                 const currentAdd = moment(dateNext).add(daysDifference * j, 'days').format('YYYY-MM-DD');
                                 const currentSubtract = moment(dateNext).subtract(daysDifference * j, 'days').format('YYYY-MM-DD');
-
                                 const aaaAdd = moment(currentAdd)
                                     .set({
                                         hour: parseInt(time.split(":")[0]),
@@ -260,6 +271,7 @@ const MyCalendar = () => {
                                     end: aaaSubtract,
                                     color: 'lightgray', // Set color for previous events
                                 });
+
                             }
 
                         }
@@ -295,6 +307,7 @@ const MyCalendar = () => {
                                 })
                                 .toDate();
 
+
                             events.push({
                                 title: selectedPill.name || 'Unknown',
                                 start: aaaAdd,
@@ -309,14 +322,11 @@ const MyCalendar = () => {
                                 color: 'lightgray', // Set color for previous events
                             });
                         }
-
-
                     }
-                    return events;
                 }
-        }
+            }
 
-        return [];
+        return events; // Move this line outside of the conditional block
     };
 
     const createCalendarEventsEmpty = () => {
@@ -472,19 +482,45 @@ const MyCalendar = () => {
 
     const [calendarEvents, setCalendarEvents] = useState([]);
 
-    useEffect(() => {
+    const updateCalendarEvents = () => {
+        let events = [];
+
+        console.log(pillsStatus);
+
+        console.log(pillsStatus.length);
+
         if (pillsStatus.length > 0 && pillsInfo.length > 0) {
-            const events = createCalendarEvents(pillsStatus);
-            console.log("events");
-            console.log(events);
-            setCalendarEvents(events);
-        }else{
-            const events = createCalendarEventsEmpty();
-            console.log("events");
-            console.log(events);
+            events = createCalendarEvents(pillsStatus);
+        } else if (pillsStatus.length === 0) {
+            events = createCalendarEventsEmpty();
+        }
+
+        console.log("Events length before setting state:", events.length);
+        console.log("Events:", events);
+
+        // Check if events array is not empty before setting the state
+        if (events.length > 0) {
             setCalendarEvents(events);
         }
-    }, [pillsStatus, pillsInfo]);
+
+        console.log("Events length after setting state:", calendarEvents.length);
+    };
+
+
+
+    // useEffect(() => {
+    //     if (pillsStatus.length > 0 && pillsInfo.length > 0) {
+    //         const events = createCalendarEvents(pillsStatus);
+    //         console.log("events");
+    //         console.log(events);
+    //         setCalendarEvents(events);
+    //     }else if(pillsStatus.length < 0){
+    //         const events = createCalendarEventsEmpty();
+    //         console.log("events");
+    //         console.log(events);
+    //         setCalendarEvents(events);
+    //     }
+    // }, [pillsStatus, pillsInfo]);
 
     const getFirstDayOfMonth = (selectedMonth) => {
         const currentYear = new Date().getFullYear();
