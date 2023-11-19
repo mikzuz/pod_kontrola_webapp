@@ -66,6 +66,16 @@ const MyCalendar = () => {
         'Grudzień': '12',
     };
 
+    const polishToEnglishDays = {
+        'Poniedziałek': 'Monday',
+        'Wtorek': 'Tuesday',
+        'Środa': 'Wednesday',
+        'Czwartek': 'Thursday',
+        'Piątek': 'Friday',
+        'Sobota': 'Saturday',
+        'Niedziela': 'Sunday'
+    };
+
     useEffect(() => {
         if (selectedPillId) {
             const pillsRef = ref(database, 'Pills');
@@ -137,11 +147,188 @@ const MyCalendar = () => {
     console.log(pillsStatus);
 
     const createCalendarEvents = (pillsStatus) => {
-        const currentDate = new Date();
+
+        console.log("tuuuu");
+
 
         const selectedPill = pillsInfo.find((info) => info.id === selectedPillId);
 
-        if (selectedPill && selectedPill.time_list.length > 0) {
+        console.log("tuuuu");
+
+
+            if (selectedPill && selectedPill.time_list.length > 0) {
+                const dateLast = moment(selectedPill.date_last, 'YYYY-MM-DD');
+                const dateNext = moment(selectedPill.date_next, 'YYYY-MM-DD');
+
+                let daysDifference = dateNext.diff(dateLast, 'days');
+                if (daysDifference === 0) {
+                    daysDifference = 1;
+                }
+
+                const events = pillsStatus
+                    .filter((item) => item.id === selectedPillId && item.status === "true" && item.date)
+                    .map((item) => {
+                        const dateParts = item.date?.split("-");
+                        const timeParts = item.time?.split(":");
+
+                        if (dateParts.length === 3 && timeParts.length === 2) {
+                            const year = parseInt(dateParts[0], 10);
+                            const month = parseInt(dateParts[1], 10) - 1;
+                            const day = parseInt(dateParts[2], 10);
+                            const hour = parseInt(timeParts[0], 10);
+                            const minute = parseInt(timeParts[1], 10);
+
+                            const eventDate = new Date(year, month, day, hour, minute);
+                            const matchingPillInfo = pillsInfo.find((info) => info.id.toString() === item.id.toString());
+
+                            return {
+                                title: matchingPillInfo ? matchingPillInfo.name : 'Unknown',
+                                start: eventDate,
+                                end: eventDate,
+                                color: 'green'
+                            };
+                        }
+
+                        return null;
+                    })
+                    .filter((event) => event !== null);
+
+                console.log("freq" + selectedPill.frequency);
+
+                if (selectedPill.frequency !== "Niestandardowa") {
+
+                    for (let i = 0; i < selectedPill.time_list.length; i++) {
+                        const time = selectedPill.time_list[i][0];
+                        const eventDateLast = moment(dateLast).set({
+                            hour: parseInt(time.split(":")[0]),
+                            minute: parseInt(time.split(":")[1]),
+                        }).toDate();
+
+                        const eventDateNext = moment(dateNext).set({
+                            hour: parseInt(time.split(":")[0]),
+                            minute: parseInt(time.split(":")[1]),
+                        }).toDate();
+
+                        events.push({
+                            title: selectedPill.name || 'Unknown',
+                            start: eventDateLast,
+                            end: eventDateLast,
+                            color: 'lightgray', // Set color for previous events
+                        });
+
+                        // Dodaj wydarzenie tylko dla dateNext, jeśli dateLast i dateNext są takie same
+                        if (!dateLast.isSame(dateNext, 'day')) {
+                            events.push({
+                                title: selectedPill.name || 'Unknown',
+                                start: eventDateNext,
+                                end: eventDateNext,
+                                color: 'lightgray', // Set color for previous events
+                            });
+                        }
+
+                        if (dateNext) {
+                            console.log("halo");
+
+                            for (let j = 1; j < 360; j++) {
+                                const currentAdd = moment(dateNext).add(daysDifference * j, 'days').format('YYYY-MM-DD');
+                                const currentSubtract = moment(dateNext).subtract(daysDifference * j, 'days').format('YYYY-MM-DD');
+
+                                const aaaAdd = moment(currentAdd)
+                                    .set({
+                                        hour: parseInt(time.split(":")[0]),
+                                        minute: parseInt(time.split(":")[1]),
+                                    })
+                                    .toDate();
+
+                                const aaaSubtract = moment(currentSubtract)
+                                    .set({
+                                        hour: parseInt(time.split(":")[0]),
+                                        minute: parseInt(time.split(":")[1]),
+                                    })
+                                    .toDate();
+
+                                events.push({
+                                    title: selectedPill.name || 'Unknown',
+                                    start: aaaAdd,
+                                    end: aaaAdd,
+                                    color: 'lightgray', // Set color for previous events
+                                });
+
+                                events.push({
+                                    title: selectedPill.name || 'Unknown',
+                                    start: aaaSubtract,
+                                    end: aaaSubtract,
+                                    color: 'lightgray', // Set color for previous events
+                                });
+                            }
+
+                        }
+
+                    }
+                } else {
+
+                    for (let i = 0; i < selectedPill.time_list.length; i++) {
+                        const time = selectedPill.time_list[i][0];
+                        const day = selectedPill.time_list[i]['day'];
+                        const timelist = selectedPill.time_list[i]['times'][0][0];
+                        console.log(day);
+                        console.log(timelist);
+
+                        const today = moment(); // Aktualna data
+                        const nextDay = today.clone().day(polishToEnglishDays[day]);
+
+                        for (let j = 1; j < 360; j++) {
+                            const currentAdd = moment(nextDay).add(7 * j, 'days').format('YYYY-MM-DD');
+                            const currentSubtract = moment(nextDay).subtract(7 * j, 'days').format('YYYY-MM-DD');
+
+                            const aaaAdd = moment(currentAdd)
+                                .set({
+                                    hour: parseInt(time.split(":")[0]),
+                                    minute: parseInt(time.split(":")[1]),
+                                })
+                                .toDate();
+
+                            const aaaSubtract = moment(currentSubtract)
+                                .set({
+                                    hour: parseInt(time.split(":")[0]),
+                                    minute: parseInt(time.split(":")[1]),
+                                })
+                                .toDate();
+
+                            events.push({
+                                title: selectedPill.name || 'Unknown',
+                                start: aaaAdd,
+                                end: aaaAdd,
+                                color: 'lightgray', // Set color for previous events
+                            });
+
+                            events.push({
+                                title: selectedPill.name || 'Unknown',
+                                start: aaaSubtract,
+                                end: aaaSubtract,
+                                color: 'lightgray', // Set color for previous events
+                            });
+                        }
+
+
+                    }
+                    return events;
+                }
+        }
+
+        return [];
+    };
+
+    const createCalendarEventsEmpty = () => {
+        const events = [];
+
+        console.log("emptyyy");
+
+        const selectedPill = pillsInfo.find((info) => info.id === selectedPillId);
+
+        console.log("tuuuu");
+
+        if (selectedPill && selectedPill.time_list && selectedPill.time_list.length > 0) {
             const dateLast = moment(selectedPill.date_last, 'YYYY-MM-DD');
             const dateNext = moment(selectedPill.date_next, 'YYYY-MM-DD');
 
@@ -150,148 +337,149 @@ const MyCalendar = () => {
                 daysDifference = 1;
             }
 
-            const events = pillsStatus
-                .filter((item) => item.id === selectedPillId && item.status === "true" && item.date)
-                .map((item) => {
-                    const dateParts = item.date?.split("-");
-                    const timeParts = item.time?.split(":");
+            console.log(selectedPill.frequency);
 
-                    if (dateParts.length === 3 && timeParts.length === 2) {
-                        const year = parseInt(dateParts[0], 10);
-                        const month = parseInt(dateParts[1], 10) - 1;
-                        const day = parseInt(dateParts[2], 10);
-                        const hour = parseInt(timeParts[0], 10);
-                        const minute = parseInt(timeParts[1], 10);
+            if (selectedPill.frequency !== "Niestandardowa") {
+                for (let i = 0; i < selectedPill.time_list.length; i++) {
+                    const timeList = selectedPill.time_list[i];
+                    if (timeList && timeList.length > 0) {
+                        const time = timeList[0];
+                        const eventDateLast = moment(dateLast).set({
+                            hour: parseInt(time.split(":")[0]),
+                            minute: parseInt(time.split(":")[1]),
+                        }).toDate();
 
-                        const eventDate = new Date(year, month, day, hour, minute);
-                        const matchingPillInfo = pillsInfo.find((info) => info.id.toString() === item.id.toString());
+                        const eventDateNext = moment(dateNext).set({
+                            hour: parseInt(time.split(":")[0]),
+                            minute: parseInt(time.split(":")[1]),
+                        }).toDate();
 
-                        return {
-                            title: matchingPillInfo ? matchingPillInfo.name : 'Unknown',
-                            start: eventDate,
-                            end: eventDate,
-                            color: 'green'
-                        };
+                        events.push({
+                            title: selectedPill.name || 'Unknown',
+                            start: eventDateLast,
+                            end: eventDateLast,
+                            color: 'lightgray', // Set color for previous events
+                        });
+
+                        // Dodaj wydarzenie tylko dla dateNext, jeśli dateLast i dateNext są takie same
+                        if (!dateLast.isSame(dateNext, 'day')) {
+                            events.push({
+                                title: selectedPill.name || 'Unknown',
+                                start: eventDateNext,
+                                end: eventDateNext,
+                                color: 'lightgray', // Set color for previous events
+                            });
+                        }
+
+                        if (dateNext) {
+                            console.log("halo");
+
+                            for (let j = 1; j < 360; j++) {
+                                const currentAdd = moment(dateNext).add(daysDifference * j, 'days').format('YYYY-MM-DD');
+                                const currentSubtract = moment(dateNext).subtract(daysDifference * j, 'days').format('YYYY-MM-DD');
+
+                                const aaaAdd = moment(currentAdd)
+                                    .set({
+                                        hour: parseInt(time.split(":")[0]),
+                                        minute: parseInt(time.split(":")[1]),
+                                    })
+                                    .toDate();
+
+                                const aaaSubtract = moment(currentSubtract)
+                                    .set({
+                                        hour: parseInt(time.split(":")[0]),
+                                        minute: parseInt(time.split(":")[1]),
+                                    })
+                                    .toDate();
+
+                                events.push({
+                                    title: selectedPill.name || 'Unknown',
+                                    start: aaaAdd,
+                                    end: aaaAdd,
+                                    color: 'lightgray', // Set color for previous events
+                                });
+
+                                events.push({
+                                    title: selectedPill.name || 'Unknown',
+                                    start: aaaSubtract,
+                                    end: aaaSubtract,
+                                    color: 'lightgray', // Set color for previous events
+                                });
+                            }
+                        }
                     }
-
-                    return null;
-                })
-                .filter((event) => event !== null);
-
-            for (let i = 0; i < selectedPill.time_list.length; i++) {
-                const time = selectedPill.time_list[i][0];
-                const eventDateLast = moment(dateLast).set({
-                    hour: parseInt(time.split(":")[0]),
-                    minute: parseInt(time.split(":")[1]),
-                }).toDate();
-
-                const eventDateNext = moment(dateNext).set({
-                    hour: parseInt(time.split(":")[0]),
-                    minute: parseInt(time.split(":")[1]),
-                }).toDate();
-
-                events.push({
-                    title: selectedPill.name || 'Unknown',
-                    start: eventDateLast,
-                    end: eventDateLast,
-                    color: 'lightgray', // Set color for previous events
-                });
-
-                // Dodaj wydarzenie tylko dla dateNext, jeśli dateLast i dateNext są takie same
-                if (!dateLast.isSame(dateNext, 'day')) {
-                    events.push({
-                        title: selectedPill.name || 'Unknown',
-                        start: eventDateNext,
-                        end: eventDateNext,
-                        color: 'lightgray', // Set color for previous events
-                    });
                 }
+            } else {
 
-                if (dateNext) {
-                    console.log("halo");
+                console.log("tak niestandardowa");
 
-                    for (let j = 1; j < 360; j++) {
-                        const currentAdd = moment(dateNext).add(daysDifference * j, 'days').format('YYYY-MM-DD');
-                        const currentSubtract = moment(dateNext).subtract(daysDifference * j, 'days').format('YYYY-MM-DD');
+                for (let i = 0; i < selectedPill.time_list.length; i++) {
 
-                        const aaaAdd = moment(currentAdd)
-                            .set({
-                                hour: parseInt(time.split(":")[0]),
-                                minute: parseInt(time.split(":")[1]),
-                            })
-                            .toDate();
+                    const timeList = selectedPill.time_list[i];
 
-                        const aaaSubtract = moment(currentSubtract)
-                            .set({
-                                hour: parseInt(time.split(":")[0]),
-                                minute: parseInt(time.split(":")[1]),
-                            })
-                            .toDate();
 
-                        console.log("days fid" + daysDifference);
-                        console.log("tutaj add " + j + " " + currentAdd);
-                        console.log("tutaj subtract " + j + " " + currentSubtract);
+                    if (timeList && timeList !== [] ) {
+                        // const time = timeList[0];
+                        const day = timeList['day'];
+                        const time = timeList['times'][0][0];
+                        console.log(day);
 
-                        events.push({
-                            title: selectedPill.name || 'Unknown',
-                            start: aaaAdd,
-                            end: aaaAdd,
-                            color: 'lightgray', // Set color for previous events
-                        });
+                        const today = moment(); // Aktualna data
+                        const nextDay = today.clone().day(polishToEnglishDays[day]);
 
-                        events.push({
-                            title: selectedPill.name || 'Unknown',
-                            start: aaaSubtract,
-                            end: aaaSubtract,
-                            color: 'lightgray', // Set color for previous events
-                        });
+
+                        for (let j = 1; j < 360; j++) {
+                            const currentAdd = moment(nextDay).add(7 * j, 'days').format('YYYY-MM-DD');
+                            const currentSubtract = moment(nextDay).subtract(7 * j, 'days').format('YYYY-MM-DD');
+
+                            const aaaAdd = moment(currentAdd)
+                                .set({
+                                    hour: parseInt(time.split(":")[0]),
+                                    minute: parseInt(time.split(":")[1]),
+                                })
+                                .toDate();
+
+                            const aaaSubtract = moment(currentSubtract)
+                                .set({
+                                    hour: parseInt(time.split(":")[0]),
+                                    minute: parseInt(time.split(":")[1]),
+                                })
+                                .toDate();
+
+                            events.push({
+                                title: selectedPill.name || 'Unknown',
+                                start: aaaAdd,
+                                end: aaaAdd,
+                                color: 'lightgray', // Set color for previous events
+                            });
+
+                            events.push({
+                                title: selectedPill.name || 'Unknown',
+                                start: aaaSubtract,
+                                end: aaaSubtract,
+                                color: 'lightgray', // Set color for previous events
+                            });
+                        }
                     }
                 }
             }
-
-            return events;
         }
 
-        return [];
+        return events;
     };
 
-    const calculateFrequency = () => {
-        if (!selectedPillId || !pillsInfo.length) {
-            return 0;
-        }
 
-        const selectedPill = pillsInfo.find((item) => item.id === selectedPillId);
-
-        if (!selectedPill || !selectedPill.date_last || !selectedPill.date_next) {
-            return 0;
-        }
-
-        const dateLast = moment(selectedPill.date_last, 'YYYY-MM-DD');
-        const dateNext = moment(selectedPill.date_next, 'YYYY-MM-DD');
-
-        // Sprawdź, czy date_last i date_next są takie same
-        if (dateLast.isSame(dateNext, 'day')) {
-            return 1;
-        }
-
-        const daysDifference = dateNext.diff(dateLast, 'days');
-        console.log("dayfs differnece" + daysDifference);
-
-        return daysDifference;
-    };
-
-    // Użycie funkcji
-    useEffect(() => {
-        const frequency = calculateFrequency();
-        setFrequency(frequency);
-        console.log('Frequency:', frequency);
-    }, [selectedPillId, pillsInfo]);
 
     const [calendarEvents, setCalendarEvents] = useState([]);
 
     useEffect(() => {
         if (pillsStatus.length > 0 && pillsInfo.length > 0) {
             const events = createCalendarEvents(pillsStatus);
+            console.log("events");
+            console.log(events);
+            setCalendarEvents(events);
+        }else{
+            const events = createCalendarEventsEmpty();
             console.log("events");
             console.log(events);
             setCalendarEvents(events);
