@@ -32,7 +32,7 @@ const Legend = () => (
                 style={{
                     width: '40px',
                     height: '40px',
-                    backgroundColor: 'gray',
+                    backgroundColor: 'lightgray',
                     marginRight: '5px',
                 }}
             />
@@ -194,7 +194,7 @@ const MyCalendar = () => {
                     title: selectedPill.name || 'Unknown',
                     start: eventDateLast,
                     end: eventDateLast,
-                    color: 'gray', // Set color for previous events
+                    color: 'lightgray', // Set color for previous events
                 });
 
                 // Dodaj wydarzenie tylko dla dateNext, jeśli dateLast i dateNext są takie same
@@ -203,7 +203,7 @@ const MyCalendar = () => {
                         title: selectedPill.name || 'Unknown',
                         start: eventDateNext,
                         end: eventDateNext,
-                        color: 'gray', // Set color for previous events
+                        color: 'lightgray', // Set color for previous events
                     });
                 }
 
@@ -236,14 +236,14 @@ const MyCalendar = () => {
                             title: selectedPill.name || 'Unknown',
                             start: aaaAdd,
                             end: aaaAdd,
-                            color: 'gray', // Set color for previous events
+                            color: 'lightgray', // Set color for previous events
                         });
 
                         events.push({
                             title: selectedPill.name || 'Unknown',
                             start: aaaSubtract,
                             end: aaaSubtract,
-                            color: 'gray', // Set color for previous events
+                            color: 'lightgray', // Set color for previous events
                         });
                     }
                 }
@@ -307,7 +307,7 @@ const MyCalendar = () => {
 
     // Funkcja dostosowująca styl wydarzenia
     const eventStyleGetter = (event, start, end, isSelected) => {
-        const backgroundColor = event.color === 'gray' ? 'gray' : 'green';
+        const backgroundColor = event.color === 'lightgray' ? 'lightgray' : 'green';
 
         const style = {
             backgroundColor: backgroundColor,
