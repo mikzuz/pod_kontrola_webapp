@@ -13,6 +13,34 @@ moment.locale('pl'); // Ustawienie moment.js na język polski
 
 const localizer = momentLocalizer(moment);
 
+const Legend = () => (
+    <div style={{ marginTop: '10px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', marginRight: '20px' }}>
+            <div
+                style={{
+                    width: '40px',
+                    height: '40px',
+                    backgroundColor: 'green',
+                    marginRight: '5px',
+                    marginBottom: '5px',
+                }}
+            />
+            <span>Tabletka wzięta</span>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+            <div
+                style={{
+                    width: '40px',
+                    height: '40px',
+                    backgroundColor: 'gray',
+                    marginRight: '5px',
+                }}
+            />
+            <span>Planowana</span>
+        </div>
+    </div>
+);
+
 const MyCalendar = () => {
     const { uid } = useParams();
     const { patientId } = useParams();
@@ -21,7 +49,7 @@ const MyCalendar = () => {
     const [maxDaily, setMaxDaily] = useState(0); // Inicjalizacja jako liczba
     const [pillsInfo, setPillsInfo] = useState([]);
     const [pillsStatus, setPillsStatus] = useState([]);
-    // const [calendarEvents, setCalendarEvents] = useState([]);
+    const [frequency, setFrequency] = useState(0);
 
     const months = {
         'Styczeń': '01',
@@ -108,97 +136,123 @@ const MyCalendar = () => {
 
     console.log(pillsStatus);
 
-    // const countOccurrences = (data) => {
-    //     const occurrenceCount = {};
-    //     const monthKey = months[selectedMonth];
-    //
-    //     data.forEach((item) => {
-    //         const date = item.date;
-    //         const pillId = item.id;
-    //         const entryMonth = date.split("-")[1];
-    //
-    //         if (pillId === selectedPillId && entryMonth === monthKey) {
-    //             if (occurrenceCount[date]) {
-    //                 occurrenceCount[date] += 1;
-    //             } else {
-    //                 occurrenceCount[date] = 1;
-    //             }
-    //         }
-    //     });
-    //
-    //     setOccurrenceCount(occurrenceCount);
-    //     updateCalendarEvents(occurrenceCount);
-    // };
-
-    // const updateCalendarEvents = (occurrenceCount) => {
-    //     const updatedEvents = Object.keys(occurrenceCount).map((date) => {
-    //         const selectedPill = pillsInfo.find((item) => item.id === selectedPillId);
-    //
-    //         if (selectedPill) {
-    //             const events = [];
-    //
-    //             for (let i = 0; i < selectedPill.time_list.length; i++) {
-    //                 const eventTime = selectedPill.time_list[i][0];
-    //                 const eventDate = new Date(date);
-    //                 eventDate.setHours(eventTime.split(":")[0]);
-    //                 eventDate.setMinutes(eventTime.split(":")[1]);
-    //
-    //                 events.push({
-    //                     title: selectedPill.name || 'Unknown',
-    //                     start: eventDate,
-    //                     end: eventDate,
-    //                     desc: `Occurrence: ${occurrenceCount[date]}`,
-    //                 });
-    //             }
-    //
-    //             return events;
-    //         }
-    //
-    //         return null;
-    //     });
-    //
-    //     const newEvents = updatedEvents.flat().filter(Boolean);
-    //     console.log(newEvents);
-    //     setCalendarEvents(newEvents);
-    // };
-
     const createCalendarEvents = (pillsStatus) => {
-        const events = pillsStatus
-            .filter((item) => item.id === selectedPillId && item.status === "true" && item.date)
-            .map((item) => {
-                const dateParts = item.date?.split("-");
-                const timeParts = item.time?.split(":");
+        const currentDate = new Date();
 
-                console.log(timeParts);
+        const selectedPill = pillsInfo.find((info) => info.id === selectedPillId);
 
-                if (dateParts.length === 3 && timeParts.length === 2) {
-                    const year = parseInt(dateParts[0], 10);
-                    const month = parseInt(dateParts[1], 10) - 1;
-                    const day = parseInt(dateParts[2], 10);
-                    const hour = parseInt(timeParts[0], 10);
-                    const minute = parseInt(timeParts[1], 10);
+        if (selectedPill && selectedPill.time_list.length > 0) {
+            const dateLast = moment(selectedPill.date_last, 'YYYY-MM-DD');
+            const dateNext = moment(selectedPill.date_next, 'YYYY-MM-DD');
 
-                    const eventDate = new Date(year, month, day, hour, minute);
-                    const matchingPillInfo = pillsInfo.find((info) => info.id.toString() === item.id.toString());
+            let daysDifference = dateNext.diff(dateLast, 'days');
+            if (daysDifference === 0) {
+                daysDifference = 1;
+            }
 
-                    console.log("matchingPillInfo:", matchingPillInfo);
-                    console.log("eventDate:", eventDate);
+            const events = pillsStatus
+                .filter((item) => item.id === selectedPillId && item.status === "true" && item.date)
+                .map((item) => {
+                    const dateParts = item.date?.split("-");
+                    const timeParts = item.time?.split(":");
 
-                    // const eventName = `${item.time} ${matchingPillInfo ? matchingPillInfo.name : 'Unknown'}`;
+                    if (dateParts.length === 3 && timeParts.length === 2) {
+                        const year = parseInt(dateParts[0], 10);
+                        const month = parseInt(dateParts[1], 10) - 1;
+                        const day = parseInt(dateParts[2], 10);
+                        const hour = parseInt(timeParts[0], 10);
+                        const minute = parseInt(timeParts[1], 10);
 
+                        const eventDate = new Date(year, month, day, hour, minute);
+                        const matchingPillInfo = pillsInfo.find((info) => info.id.toString() === item.id.toString());
 
-                    return {
-                        title: matchingPillInfo ? matchingPillInfo.name : 'Unknown',
-                        start: eventDate,
-                        end: eventDate,
-                    };
+                        return {
+                            title: matchingPillInfo ? matchingPillInfo.name : 'Unknown',
+                            start: eventDate,
+                            end: eventDate,
+                            color: 'green'
+                        };
+                    }
+
+                    return null;
+                })
+                .filter((event) => event !== null);
+
+            for (let i = 0; i < selectedPill.time_list.length; i++) {
+                const time = selectedPill.time_list[i][0];
+                const eventDateLast = moment(dateLast).set({
+                    hour: parseInt(time.split(":")[0]),
+                    minute: parseInt(time.split(":")[1]),
+                }).toDate();
+
+                const eventDateNext = moment(dateNext).set({
+                    hour: parseInt(time.split(":")[0]),
+                    minute: parseInt(time.split(":")[1]),
+                }).toDate();
+
+                events.push({
+                    title: selectedPill.name || 'Unknown',
+                    start: eventDateLast,
+                    end: eventDateLast,
+                    color: 'gray', // Set color for previous events
+                });
+
+                // Dodaj wydarzenie tylko dla dateNext, jeśli dateLast i dateNext są takie same
+                if (!dateLast.isSame(dateNext, 'day')) {
+                    events.push({
+                        title: selectedPill.name || 'Unknown',
+                        start: eventDateNext,
+                        end: eventDateNext,
+                        color: 'gray', // Set color for previous events
+                    });
                 }
 
-                return null;
-            })
-            .filter((event) => event !== null);
+                if (dateNext) {
+                    console.log("halo");
 
-        return events;
+                    for (let j = 1; j < 360; j++) {
+                        const currentAdd = moment(dateNext).add(daysDifference * j, 'days').format('YYYY-MM-DD');
+                        const currentSubtract = moment(dateNext).subtract(daysDifference * j, 'days').format('YYYY-MM-DD');
+
+                        const aaaAdd = moment(currentAdd)
+                            .set({
+                                hour: parseInt(time.split(":")[0]),
+                                minute: parseInt(time.split(":")[1]),
+                            })
+                            .toDate();
+
+                        const aaaSubtract = moment(currentSubtract)
+                            .set({
+                                hour: parseInt(time.split(":")[0]),
+                                minute: parseInt(time.split(":")[1]),
+                            })
+                            .toDate();
+
+                        console.log("days fid" + daysDifference);
+                        console.log("tutaj add " + j + " " + currentAdd);
+                        console.log("tutaj subtract " + j + " " + currentSubtract);
+
+                        events.push({
+                            title: selectedPill.name || 'Unknown',
+                            start: aaaAdd,
+                            end: aaaAdd,
+                            color: 'gray', // Set color for previous events
+                        });
+
+                        events.push({
+                            title: selectedPill.name || 'Unknown',
+                            start: aaaSubtract,
+                            end: aaaSubtract,
+                            color: 'gray', // Set color for previous events
+                        });
+                    }
+                }
+            }
+
+            return events;
+        }
+
+        return [];
     };
 
     const calculateFrequency = () => {
@@ -221,21 +275,17 @@ const MyCalendar = () => {
         }
 
         const daysDifference = dateNext.diff(dateLast, 'days');
-        const frequency = 1 / daysDifference;
+        console.log("dayfs differnece" + daysDifference);
 
-        return frequency;
+        return daysDifference;
     };
 
-// Użycie funkcji
+    // Użycie funkcji
     useEffect(() => {
         const frequency = calculateFrequency();
+        setFrequency(frequency);
         console.log('Frequency:', frequency);
     }, [selectedPillId, pillsInfo]);
-
-
-
-
-
 
     const [calendarEvents, setCalendarEvents] = useState([]);
 
@@ -248,10 +298,6 @@ const MyCalendar = () => {
         }
     }, [pillsStatus, pillsInfo]);
 
-
-
-
-
     const getFirstDayOfMonth = (selectedMonth) => {
         const currentYear = new Date().getFullYear();
         const selectedMonthIndex = Object.keys(months).indexOf(selectedMonth);
@@ -259,10 +305,28 @@ const MyCalendar = () => {
         return startDate;
     };
 
+    // Funkcja dostosowująca styl wydarzenia
+    const eventStyleGetter = (event, start, end, isSelected) => {
+        const backgroundColor = event.color === 'gray' ? 'gray' : 'green';
+
+        const style = {
+            backgroundColor: backgroundColor,
+            borderRadius: '0px',
+            opacity: 0.8,
+            color: 'black',
+            border: '0px',
+            display: 'block',
+        };
+
+        return {
+            style: style,
+        };
+    };
+
     return (
         <div>
-            <Navbar uid={uid} />
-            <div style={{ height: 500, marginTop: 20 }}>
+            <Navbar uid={uid}/>
+            <div style={{height: 550, marginTop: 20, marginRight: 10, marginLeft: 10}}>
                 <Calendar
                     localizer={localizer}
                     events={calendarEvents}
@@ -280,7 +344,9 @@ const MyCalendar = () => {
                         week: 'Tydzień',
                         day: 'Dzień',
                     }}
+                    eventPropGetter={eventStyleGetter}
                 />
+                <Legend />
             </div>
         </div>
     );

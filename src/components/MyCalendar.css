@@ -3,11 +3,6 @@
     background-color: #8ed1fc ;
 }
 
-/* Zmiana koloru tła wydarzeń */
-.rbc-event {
-    background-color: #83F970;
-}
-
 /* Zmiana koloru tekstu w wydarzeniach */
 .rbc-event-label {
     color: #FFFFFF;
