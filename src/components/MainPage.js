@@ -23,6 +23,12 @@ import SouthIcon from '@mui/icons-material/South';
 const MainPage = () => {
 
     const { uid } = useParams();
+    const navigate = useNavigate();
+    // const user = auth.currentUser;
+    //
+    // if (user === null) {
+    //     navigate(`/`);
+    // }
 
     const theme = createTheme({
         palette: {
@@ -37,7 +43,6 @@ const MainPage = () => {
         },
     });
 
-    const navigate = useNavigate();
     const [patientList, setPatientList] = useState([]);
     const [filteredPatientList, setFilteredPatientList] = useState([]);
     const [activePatient, setActivePatient] = useState(null);

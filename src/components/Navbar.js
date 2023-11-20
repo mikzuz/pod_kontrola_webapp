@@ -8,6 +8,11 @@ import 'react-toastify/dist/ReactToastify.css';
 
 const Navbar = ({ uid }) => {
     let navigate = useNavigate();
+    const user = auth.currentUser;
+
+    if (user === null) {
+        navigate(`/`);
+    }
 
     const handleLogOut = async () => {
         await logOut();
