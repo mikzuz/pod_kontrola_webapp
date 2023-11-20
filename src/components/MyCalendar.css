@@ -3,11 +3,6 @@
     background-color: #8ed1fc ;
 }
 
-/* Zmiana koloru tła wydarzeń */
-.rbc-event {
-    background-color: #FFC300;
-}
-
 /* Zmiana koloru tekstu w wydarzeniach */
 .rbc-event-label {
     color: #FFFFFF;
@@ -15,7 +10,7 @@
 
 /* Zmiana koloru dni tygodnia */
 .rbc-row-bg {
-    background-color: #F7F7F7;
+    background-color: #fff;
 }
 
 /* Zmiana koloru nazw miesięcy na biały */
@@ -38,7 +33,7 @@
 }
 /* Zmiana tła widoku tygodnia i dnia kalendarza na szare */
 .rbc-time-view, .rbc-day-view {
-    background-color: #F7F7F7; /* Kolor tła */
+    background-color: #fff; /* Kolor tła */
 }
 /* Zmiana koloru nazwy miesiąca i dnia na biały w widoku dnia */
 .rbc-time-header-content {
