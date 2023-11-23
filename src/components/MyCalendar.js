@@ -279,49 +279,109 @@ const MyCalendar = () => {
                     }
                 } else {
 
+                    console.log("tak niestandardowa");
+                    const daysList = {};
+                    let timeList = [];
+
+                    const polishToEnglishDays = {
+                        'Poniedziałek': 1,
+                        'Wtorek': 2,
+                        'Środa': 3,
+                        'Czwartek': 4,
+                        'Piątek': 5,
+                        'Sobota': 6,
+                        'Niedziela': 0
+                    };
+
+
+                    const daysMap = new Map();
+
                     for (let i = 0; i < selectedPill.time_list.length; i++) {
-                        const time = selectedPill.time_list[i][0];
-                        const day = selectedPill.time_list[i]['day'];
-                        const timelist = selectedPill.time_list[i]['times'][0][0];
-                        console.log(day);
-                        console.log(timelist);
+                        const timeList = selectedPill.time_list[i];
+                        const date = timeList['day'];
+                        const time = timeList['times'];
+                        for (let i = 0; i < time.length; i++) {
 
-                        const today = moment(); // Aktualna data
-                        const nextDay = today.clone().day(polishToEnglishDays[day]);
+                            const time = timeList['times'][i][0];
 
-                        for (let j = 1; j < 360; j++) {
-                            const currentAdd = moment(nextDay).add(7 * j, 'days').format('YYYY-MM-DD');
-                            const currentSubtract = moment(nextDay).subtract(7 * j, 'days').format('YYYY-MM-DD');
+                            console.log("times" + time);
 
-                            const aaaAdd = moment(currentAdd)
-                                .set({
-                                    hour: parseInt(time.split(":")[0]),
-                                    minute: parseInt(time.split(":")[1]),
-                                })
-                                .toDate();
+                            if (polishToEnglishDays.hasOwnProperty(date)) {
+                                const today = moment(); // Aktualna data
+                                const nextDay = today.clone().day(polishToEnglishDays[date]);
+                                console.log("nextday" + nextDay);
 
-                            const aaaSubtract = moment(currentSubtract)
-                                .set({
-                                    hour: parseInt(time.split(":")[0]),
-                                    minute: parseInt(time.split(":")[1]),
-                                })
-                                .toDate();
-
-
-                            events.push({
-                                title: selectedPill.name || 'Unknown',
-                                start: aaaAdd,
-                                end: aaaAdd,
-                                color: 'lightgray', // Set color for previous events
-                            });
-
-                            events.push({
-                                title: selectedPill.name || 'Unknown',
-                                start: aaaSubtract,
-                                end: aaaSubtract,
-                                color: 'lightgray', // Set color for previous events
-                            });
+                                // Dodanie do mapy tylko jeśli nextDay jest liczbą
+                                if (!isNaN(nextDay)) {
+                                    daysMap.set(nextDay, time);
+                                }
+                            }
                         }
+                    }
+
+// Wyświetlenie zawartości mapy
+                    daysMap.forEach((time, day) => {
+                        console.log(`Dzień: ${day}, Godzina: ${time}`);
+                    });
+
+                    console.log(daysMap);
+                    if (timeList && timeList !== [] ) {
+
+
+
+
+                        daysMap.forEach((time, day) => {
+
+                            const firstAdd = moment(day).format('YYYY-MM-DD');
+
+                            const aaaFirstAdd = moment(firstAdd)
+                                .set({
+                                    hour: parseInt(time.split(":")[0]),
+                                    minute: parseInt(time.split(":")[1]),
+                                })
+                                .toDate();
+
+                            events.push({
+                                title: selectedPill.name || 'Unknown',
+                                start: aaaFirstAdd,
+                                end: aaaFirstAdd,
+                                color: 'lightgray',
+                            });
+
+
+                            for (let j = 1; j < 360; j++) {
+                                const currentAdd = moment(day).add(7 * j, 'days').format('YYYY-MM-DD');
+                                const currentSubtract = moment(day).subtract(7 * j, 'days').format('YYYY-MM-DD');
+
+                                const aaaAdd = moment(currentAdd)
+                                    .set({
+                                        hour: parseInt(time.split(":")[0]),
+                                        minute: parseInt(time.split(":")[1]),
+                                    })
+                                    .toDate();
+
+                                const aaaSubtract = moment(currentSubtract)
+                                    .set({
+                                        hour: parseInt(time.split(":")[0]),
+                                        minute: parseInt(time.split(":")[1]),
+                                    })
+                                    .toDate();
+
+                                events.push({
+                                    title: selectedPill.name || 'Unknown',
+                                    start: aaaAdd,
+                                    end: aaaAdd,
+                                    color: 'lightgray',
+                                });
+
+                                events.push({
+                                    title: selectedPill.name || 'Unknown',
+                                    start: aaaSubtract,
+                                    end: aaaSubtract,
+                                    color: 'lightgray',
+                                });
+                            }
+                        });
                     }
                 }
             }
@@ -468,6 +528,23 @@ const MyCalendar = () => {
 
 
                         daysMap.forEach((time, day) => {
+
+                            const firstAdd = moment(day).format('YYYY-MM-DD');
+
+                            const aaaFirstAdd = moment(firstAdd)
+                                .set({
+                                    hour: parseInt(time.split(":")[0]),
+                                    minute: parseInt(time.split(":")[1]),
+                                })
+                                .toDate();
+
+                            events.push({
+                                title: selectedPill.name || 'Unknown',
+                                start: aaaFirstAdd,
+                                end: aaaFirstAdd,
+                                color: 'lightgray',
+                            });
+
                             for (let j = 1; j < 360; j++) {
                                 const currentAdd = moment(day).add(7 * j, 'days').format('YYYY-MM-DD');
                                 const currentSubtract = moment(day).subtract(7 * j, 'days').format('YYYY-MM-DD');
