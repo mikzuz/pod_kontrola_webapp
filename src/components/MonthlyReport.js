@@ -4,89 +4,77 @@ import CanvasJSReact from '@canvasjs/react-charts';
 import { database } from './firebase-config';
 import { ref } from 'firebase/database';
 import { query, orderByChild, equalTo, onValue } from 'firebase/database';
-import {useNavigate, useParams} from 'react-router-dom';
-import Navbar from "./Navbar";
-import NavbarNew from "./NavbarNew";
+import { useNavigate, useParams } from 'react-router-dom';
+import Navbar from './Navbar';
+import NavbarNew from './NavbarNew';
 
 const CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
 const MonthlyReport = () => {
-    const [chartOptions, setChartOptions] = useState(null);
     const [selectedMonth, setSelectedMonth] = useState('Styczeń');
     const [selectedPill, setSelectedPill] = useState('');
     const [selectedParameter, setSelectedParameter] = useState('');
     const [pillsData, setPillsData] = useState([]);
     const [reportData, setReportData] = useState([]);
-    const { patientId } = useParams();
-    const { uid } = useParams();
+    const { patientId, uid } = useParams();
 
-
-
-    useEffect(() => {
-        const options = {
-            animationEnabled: true,
-            title: {
-                text: 'Miesięczny raport',
-                font: 'Helvetica Neue Light, HelveticaNeue-Light, Helvetica Neue, Helvetica, Arial, Lucida Grande, sans-serif',
-                fontWeight: 'normal',
+    const [chartOptions, setChartOptions] = useState({
+        animationEnabled: true,
+        title: {
+            text: 'Miesięczny raport',
+            font:
+                'Helvetica Neue Light, HelveticaNeue-Light, Helvetica Neue, Helvetica, Arial, Lucida Grande, sans-serif',
+            fontWeight: 'normal',
+        },
+        axisX: {
+            title: 'Data',
+        },
+        axisY: {
+            title: '',
+        },
+        data: [
+            {
+                type: 'line',
+                dataPoints: [],
             },
-            axisX: {
-                title: 'Data',
-            },
-            axisY: {
-                title: '',
-            },
-            data: [
-                {
-                    type: 'line',
-                    dataPoints: [],
-                },
-            ],
-        };
-
-        setChartOptions(options);
-    }, []);
+        ],
+    });
 
     const months = {
-        'Styczeń': '01',
-        'Luty': '02',
-        'Marzec': '03',
-        'Kwiecień': '04',
-        'Maj': '05',
-        'Czerwiec': '06',
-        'Lipiec': '07',
-        'Sierpień': '08',
-        'Wrzesień': '09',
-        'Październik': '10',
-        'Listopad': '11',
-        'Grudzień': '12',
+        Styczeń: '01',
+        Luty: '02',
+        Marzec: '03',
+        Kwiecień: '04',
+        Maj: '05',
+        Czerwiec: '06',
+        Lipiec: '07',
+        Sierpień: '08',
+        Wrzesień: '09',
+        Październik: '10',
+        Listopad: '11',
+        Grudzień: '12',
     };
 
     const parameters = {
-        'Aktywność': 'Aktywność',
-        'Ciśnienie': 'Ciśnienie',
+        Aktywność: 'Aktywność',
+        Ciśnienie: 'Ciśnienie',
         'Poziom cukru': 'Poziom',
-        'Sen': 'Sen',
-        'Temperatura': 'Temp',
-        'Waga': 'Waga',
+        Sen: 'Sen',
+        Temperatura: 'Temp',
+        Waga: 'Waga',
     };
 
     const units = {
-        'Aktywność': 'godz.',
-        'Ciśnienie': 'mmHg',
+        Aktywność: 'godz.',
+        Ciśnienie: 'mmHg',
         'Poziom cukru': 'mg/dl',
-        'Sen': 'godz.',
-        'Temperatura': '°C',
-        'Waga': 'kg',
+        Sen: 'godz.',
+        Temperatura: '°C',
+        Waga: 'kg',
     };
 
-    const getUnitForParameter = (parameter) => {
-        return units[parameter] || '';
-    };
-
-    const getUnitForMonths = (month) => {
-        return units[month] || '';
-    };
+    const getUnitForParameter = (parameter) => units[parameter] || '';
+    const getUnitForMonths = (month) => units[month] || '';
 
     const navigate = useNavigate();
 
@@ -95,12 +83,11 @@ const MonthlyReport = () => {
             const selectedPillData = pillsData.find((pill) => pill.name === selectedPill);
             if (selectedPillData) {
                 const selectedPillId = selectedPillData.id;
-                navigate(`/calendar/${uid}/${patientId}/${selectedPillId}/${selectedMonth}`); // Dodaj selectedMonth do routera
+                navigate(`/calendar/${uid}/${patientId}/${selectedPillId}/${selectedMonth}`);
                 console.log(selectedPillId);
             }
         }
     };
-
 
     useEffect(() => {
         const pillsRef = ref(database, 'Pills');
@@ -112,7 +99,7 @@ const MonthlyReport = () => {
                 setPillsData(statsArray);
             }
         });
-    }, [selectedMonth]);
+    }, [selectedMonth, patientId]);
 
     useEffect(() => {
         if (pillsData.length > 0 && selectedPill) {
@@ -125,11 +112,12 @@ const MonthlyReport = () => {
                     },
                 ];
 
-                const updatedOptions = { ...chartOptions };
-                updatedOptions.data[0].dataPoints = updatedData;
-                updatedOptions.axisY.title = '';
-
-                setChartOptions(updatedOptions);
+                setChartOptions((prevOptions) => {
+                    const updatedOptions = { ...prevOptions };
+                    updatedOptions.data[0].dataPoints = updatedData;
+                    updatedOptions.axisY.title = '';
+                    return updatedOptions;
+                });
             }
         }
     }, [pillsData, selectedPill]);
@@ -144,7 +132,7 @@ const MonthlyReport = () => {
                 setReportData(statsArray);
             }
         });
-    }, [selectedMonth]);
+    }, [selectedMonth, selectedParameter, patientId]);
 
     useEffect(() => {
         if (selectedParameter && selectedMonth && reportData.length > 0) {
@@ -152,7 +140,6 @@ const MonthlyReport = () => {
             const monthKey = months[selectedMonth];
 
             const filteredData = reportData.filter((entry) => {
-                // Zakładam, że format daty jest "DD.MM.YYYY", dostosuj to do rzeczywistego formatu daty
                 return (
                     entry.date.includes(`-${monthKey}-`) &&
                     typeof entry[parameterKey] !== 'undefined'
@@ -160,19 +147,20 @@ const MonthlyReport = () => {
             });
 
             const dataForSelectedParameter = filteredData.map((entry) => ({
-                x: new Date(entry.date), // Zakładam, że data jest w poprawnym formacie
+                x: new Date(entry.date),
                 y: parseFloat(entry[parameterKey]),
             }));
 
-            const updatedOptions = { ...chartOptions };
-            updatedOptions.title.text = `Miesięczny raport - ${selectedMonth}`;
-            updatedOptions.axisX.title = 'Data';
-            updatedOptions.data[0].dataPoints = dataForSelectedParameter;
-            updatedOptions.axisY.title = getUnitForParameter(selectedParameter);
-
-            setChartOptions(updatedOptions);
+            setChartOptions((prevOptions) => {
+                const updatedOptions = { ...prevOptions };
+                updatedOptions.title.text = `Miesięczny raport - ${selectedMonth}`;
+                updatedOptions.axisX.title = 'Data';
+                updatedOptions.data[0].dataPoints = dataForSelectedParameter;
+                updatedOptions.axisY.title = getUnitForParameter(selectedParameter);
+                return updatedOptions;
+            });
         }
-    }, [selectedParameter, selectedMonth, reportData, chartOptions]);
+    }, [selectedParameter, selectedMonth, reportData]);
 
     return (
         <div>
@@ -218,7 +206,7 @@ const MonthlyReport = () => {
                                         style={{ width: '100%' }}
                                         onChange={(e) => setSelectedPill(e.target.value)}
                                     >
-                                        <option value="">Wybierz lek</option> {/* Dodaj opcję "Wybierz lek" */}
+                                        <option value="">Wybierz lek</option>
                                         {pillsData.map((pill, index) => (
                                             <option key={index} value={pill.name}>
                                                 {pill.name}
