@@ -4,10 +4,9 @@ import CanvasJSReact from '@canvasjs/react-charts';
 import { database } from './firebase-config';
 import { ref } from 'firebase/database';
 import { query, orderByChild, equalTo, onValue } from 'firebase/database';
-import {useNavigate, useParams} from 'react-router-dom';
-import Navbar from "./Navbar";
 import { useNavigate, useParams } from 'react-router-dom';
 import Navbar from './Navbar';
+import NavbarNew from './NavbarNew';
 
 const CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
@@ -233,7 +232,7 @@ const MonthlyReport = () => {
                                         }}
                                         onClick={handleTabletsClick}
                                     >
-                                        KALENDARZ LEKÓW
+                                        TABLETKI
                                     </Button>
                                 </Form.Group>
                             </Form>

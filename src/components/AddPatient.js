@@ -120,8 +120,6 @@ const AddPatient = () => {
         <div>
             <Navbar uid={uid} />
             <div className="Auth-form-container" style={{flexDirection: 'column'}}>
-
-                <div id="background1"></div>
                 <form className="Auth-form">
                     <div className="Auth-form-content">
                         <h3 className="Auth-form-title">Dodaj nowego pacjenta</h3>
@@ -173,7 +171,6 @@ const AddPatient = () => {
                         Dodaj
                     </button>
                 </div>
-                <div id="background2"></div>
             </div>
         </div>
     );
