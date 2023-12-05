@@ -6,7 +6,6 @@ import { ref } from 'firebase/database';
 import { query, orderByChild, equalTo, onValue } from 'firebase/database';
 import {useNavigate, useParams} from 'react-router-dom';
 import Navbar from "./Navbar";
-import NavbarNew from "./NavbarNew";
 
 const CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
@@ -19,8 +18,6 @@ const MonthlyReport = () => {
     const [reportData, setReportData] = useState([]);
     const { patientId } = useParams();
     const { uid } = useParams();
-
-
 
     useEffect(() => {
         const options = {
@@ -244,7 +241,7 @@ const MonthlyReport = () => {
                                         }}
                                         onClick={handleTabletsClick}
                                     >
-                                        TABLETKI
+                                        KALENDARZ LEKÓW
                                     </Button>
                                 </Form.Group>
                             </Form>

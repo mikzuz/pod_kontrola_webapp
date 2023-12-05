@@ -222,8 +222,8 @@ const EditPill = () => {
                 await set(ref(database, 'Pills/' + selectedPillId), {
                     name: name,
                     id: selectedPillId,
-                    inBox: amountLeft,
-                    availability: amountLeft,
+                    inBox: parseInt(amountLeft),
+                    availability: parseInt(amountLeft),
                     date_last: date,
                     date_next: date_next,
                     frequency: frequency,
@@ -234,8 +234,8 @@ const EditPill = () => {
                 await set(ref(database, 'Pills/' + selectedPillId), {
                     name: name,
                     id: selectedPillId,
-                    inBox: amountLeft,
-                    availability: amountLeft,
+                    inBox: parseInt(amountLeft),
+                    availability: parseInt(amountLeft),
                     date_last: date,
                     date_next: date_next,
                     frequency: frequency,
