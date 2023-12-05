@@ -727,6 +727,7 @@ const EditPill = () => {
                                 className="form-control mt-1"
                                 placeholder="Ilość tabletek w opakowaniu"
                                 value={amountInBox}
+                                readOnly
                                 onChange={(event) => {setAmountInBox(event.target.value)}}
                             />
                         </div>
@@ -737,6 +738,7 @@ const EditPill = () => {
                                 className="form-control mt-1"
                                 placeholder="Pozostała ilość tabletek w opakowaniu"
                                 value={amountLeft}
+                                readOnly
                                 onChange={(event) => {setAmountLeft(event.target.value)}}
                             />
                         </div>

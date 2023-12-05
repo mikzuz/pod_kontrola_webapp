@@ -53,9 +53,9 @@ const AddPatient = () => {
     };
 
     const getPatientFromDatabase = async () => {
-        if(pesel.length !== 11) {
-            toast.error("Numer PESEL musi zawierać 11 cyfr")
-            return
+        if (pesel.length !== 11 || pesel.split('').some(char => isNaN(char))) {
+            toast.error("Numer PESEL musi zawierać 11 cyfr");
+            return;
         }
 
         const usersRef = ref(database, 'Users');
