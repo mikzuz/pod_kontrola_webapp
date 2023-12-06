@@ -11,7 +11,17 @@ import NavbarNew from './NavbarNew';
 const CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
 const MonthlyReport = () => {
-    const [selectedMonth, setSelectedMonth] = useState('Styczeń');
+
+    function getCurrentMonth() {
+        const options = { month: 'long' };
+        const polishMonth = new Intl.DateTimeFormat('pl-PL', options).format(new Date()).replace(/^\w/, (c) => c.toUpperCase());
+        console.log(polishMonth);
+        return polishMonth;
+    }
+
+
+
+    const [selectedMonth, setSelectedMonth] = useState(getCurrentMonth());
     const [selectedPill, setSelectedPill] = useState('');
     const [selectedParameter, setSelectedParameter] = useState('');
     const [pillsData, setPillsData] = useState([]);
@@ -88,6 +98,8 @@ const MonthlyReport = () => {
             }
         }
     };
+
+
 
     useEffect(() => {
         const pillsRef = ref(database, 'Pills');
