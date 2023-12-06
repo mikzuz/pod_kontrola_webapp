@@ -31,7 +31,7 @@ const AddPatient = () => {
     ];
 
     const addPatient = async () => {
-        if(!checkIfAlreadyPatient(patientId)) {
+        if(checkIfAlreadyPatient(patientId)) {
             toast.error("Użytkownik o podanym numerze PESEL już jest Twoim pacjentem")
             return
         };

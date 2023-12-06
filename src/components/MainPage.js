@@ -24,11 +24,6 @@ const MainPage = () => {
 
     const { uid } = useParams();
     const navigate = useNavigate();
-    // const user = auth.currentUser;
-    //
-    // if (user === null) {
-    //     navigate(`/`);
-    // }
 
     const theme = createTheme({
         palette: {
@@ -72,6 +67,8 @@ const MainPage = () => {
     const getPatientFromDatabase = (patientId) => {
         const patientRef = ref(database, `Users/${patientId}`);
 
+        setPatientList([]);
+        setFilteredPatientList([]);
         get(patientRef)
             .then((snapshot) => {
                 if (snapshot.exists()) {
