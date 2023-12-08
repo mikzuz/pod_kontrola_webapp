@@ -13,6 +13,8 @@ import dayjs from 'dayjs';
 import styled from 'styled-components';
 import "./AddPill.css";
 import {Button, ButtonGroup, IconButton} from "@mui/material";
+import TextField from '@mui/material/TextField';
+import Autocomplete from '@mui/material/Autocomplete';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 
 // npm install @mui/x-date-pickers
@@ -35,9 +37,9 @@ const AddPill = () => {
     const navigate = useNavigate();
     const { uid } = useParams();
     let { patientId } = useParams();
-    const [name, setName] = useState("");
+    const [name, setName] = useState('');
     const [time, setTime] = useState([defaultTime, defaultTime, defaultTime]);
-    const [frequency, setFrequency] = useState("");
+    const [frequency, setFrequency] = useState("Codziennie");
     const [amountLeft, setAmountLeft] = useState("");
     const [timesToShow, setTimesToShow] = useState(1);
     const [chooseHours, setChooseHours] = useState("Wybierz godziny przypomnień");
@@ -49,6 +51,16 @@ const AddPill = () => {
     const [timeSaturday, setTimeSaturday] = useState([]);
     const [timeSunday, setTimeSunday] = useState([]);
     const [customTime, setCustomTime] = useState(false);
+    const [data, setData] = useState([]);
+
+    async function getData() {
+        const response = await sendHttpRequest()
+        setData(response)
+    }
+
+    useEffect(() => {
+        getData()
+    }, []);
 
     const handleAdd = () => {
         if(name === '') {
@@ -443,7 +455,31 @@ const AddPill = () => {
                 );
                 break;
         }
+    };
 
+    const sendHttpRequest = async () => {
+        try {
+            const response = await fetch(`http://192.168.0.100:5000/get`);
+            if (response.ok) {
+                const data = await response.json();
+                console.log(data)
+                return data.result.map(item => item.toString());
+            } else {
+                console.error(`Error: ${response.status}`);
+                return [];
+            }
+        } catch (error) {
+            console.error(`Error: ${error.message}`);
+            return [];
+        }
+    };
+
+    const handleNameChange = (event, newValue) => {
+        setName(newValue);
+    };
+
+    const handleInputChange = (event, newInputValue) => {
+        setName(newInputValue);
     };
 
     return (
@@ -454,12 +490,24 @@ const AddPill = () => {
                     <div className="Auth-form-content">
                         <h3 className="Auth-form-title">Dodaj nowy lek</h3>
                         <div className="form-group mt-3" style={{marginBottom: '0.5em'}}>
-                            <input
-                                type="firstName"
-                                className="form-control mt-1"
-                                placeholder="Nazwa leku"
+                            <label>Nazwa leku</label>
+                            <Autocomplete
+                                freeSolo
+                                id="free-solo-2-demo"
+                                disableClearable
+                                options={data.map((option) => option)}
                                 value={name}
-                                onChange={(event) => {setName(event.target.value)}}
+                                onChange={handleNameChange}
+                                onInputChange={handleInputChange}
+                                renderInput={(params) => (
+                                    <TextField
+                                        {...params}
+                                        InputProps={{
+                                            ...params.InputProps,
+                                            type: 'search',
+                                        }}
+                                    />
+                                )}
                             />
                         </div>
                         <label>Wybierz częstotliwość przyjmowania leku</label>

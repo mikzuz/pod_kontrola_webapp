@@ -24,3 +24,13 @@
         width: 280px !important;
     }
 }
+
+.MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary.MuiInputBase-fullWidth.MuiInputBase-formControl.MuiAutocomplete-inputRoot.css-md26zr-MuiInputBase-root-MuiOutlinedInput-root {
+    background-color: white;
+    border-radius: 5px;
+    height: 40px;
+}
+
+.MuiInputBase-input.MuiOutlinedInput-input.MuiInputBase-inputTypeSearch.MuiAutocomplete-input.MuiAutocomplete-inputFocused.css-1g24dm6-MuiInputBase-input-MuiOutlinedInput-input {
+    padding-top: 0;
+}

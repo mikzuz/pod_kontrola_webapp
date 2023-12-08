@@ -14,6 +14,8 @@ import styled from 'styled-components';
 import "./AddPill.css";
 import {Button, ButtonGroup, IconButton} from "@mui/material";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
+import Autocomplete from "@mui/material/Autocomplete";
+import TextField from "@mui/material/TextField";
 
 const EditPill = () => {
 
@@ -51,6 +53,41 @@ const EditPill = () => {
     const [timeSaturday, setTimeSaturday] = useState([]);
     const [timeSunday, setTimeSunday] = useState([]);
     const [customTime, setCustomTime] = useState(false);
+    const [data, setData] = useState([]);
+
+    async function getData() {
+        const response = await sendHttpRequest()
+        setData(response)
+    }
+
+    useEffect(() => {
+        getData()
+    }, []);
+
+    const sendHttpRequest = async () => {
+        try {
+            const response = await fetch(`http://192.168.0.100:5000/get`);
+            if (response.ok) {
+                const data = await response.json();
+                console.log(data)
+                return data.result.map(item => item.toString());
+            } else {
+                console.error(`Error: ${response.status}`);
+                return [];
+            }
+        } catch (error) {
+            console.error(`Error: ${error.message}`);
+            return [];
+        }
+    };
+
+    const handleNameChange = (event, newValue) => {
+        setName(newValue);
+    };
+
+    const handleInputChange = (event, newInputValue) => {
+        setName(newInputValue);
+    };
 
     useEffect(() => {
         setTime([time1, time2, time3]);
@@ -548,12 +585,23 @@ const EditPill = () => {
                         <h3 className="Auth-form-title">Edytuj lek</h3>
                         <div className="form-group mt-3" style={{marginBottom: '0.5em'}}>
                             <label>Nazwa leku</label>
-                            <input
-                                type="firstName"
-                                className="form-control mt-1"
-                                placeholder="Nazwa leku"
+                            <Autocomplete
+                                freeSolo
+                                id="free-solo-2-demo"
+                                disableClearable
+                                options={data.map((option) => option)}
                                 value={name}
-                                onChange={(event) => {setName(event.target.value)}}
+                                onChange={handleNameChange}
+                                onInputChange={handleInputChange}
+                                renderInput={(params) => (
+                                    <TextField
+                                        {...params}
+                                        InputProps={{
+                                            ...params.InputProps,
+                                            type: 'search',
+                                        }}
+                                    />
+                                )}
                             />
                         </div>
                         <label>Częstotliwość przyjmowania leku</label>
