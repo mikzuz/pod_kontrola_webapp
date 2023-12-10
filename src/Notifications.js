@@ -61,8 +61,11 @@ const Notifications = () => {
     const handleDialogConfirm = () => {
         setDialogOpen(false);
         if (selectedNotification) {
-            const { uid, patientId } = selectedNotification;
-            navigate(`/monthlyReport/${uid}/${patientId}`);
+            console.log(selectedNotification);
+            const { recipient, pacient } = selectedNotification;
+            console.log(recipient);
+            navigate(`/monthlyReport/${recipient}/${pacient}`);
+
         }
     };
 
